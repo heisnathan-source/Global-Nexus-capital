@@ -1,53 +1,112 @@
-import { S3Client, PutObjectCommand, GetObjectCommand } from "@aws-sdk/client-s3";
+import https from "node:https";
+import { NodeHttpHandler } from "@smithy/node-http-handler";
+import {
+  S3Client,
+  PutObjectCommand,
+  GetObjectCommand,
+} from "@aws-sdk/client-s3";
 
-const bucket = process.env.BUCKET || process.env.AWS_S3_BUCKET;
-const accessKeyId = process.env.ACCESS_KEY_ID || process.env.AWS_ACCESS_KEY_ID;
-const secretAccessKey = process.env.SECRET_ACCESS_KEY || process.env.AWS_SECRET_ACCESS_KEY;
-const endpoint = process.env.ENDPOINT || process.env.AWS_ENDPOINT_URL;
-const region = process.env.REGION || process.env.AWS_DEFAULT_REGION || "auto";
+function env(...names) {
+  for (const name of names) {
+    const value = process.env[name];
 
-function requireStorageConfig() {
+    if (
+      value !== undefined &&
+      value !== null &&
+      String(value).trim() !== ""
+    ) {
+      return String(value).trim();
+    }
+  }
+
+  return "";
+}
+
+function getConfig() {
+  let endpoint = env(
+    "ENDPOINT",
+    "AWS_ENDPOINT_URL"
+  );
+
+  // Remove accidental trailing slashes.
+  endpoint = endpoint.replace(/\/+$/, "");
+
+  return {
+    bucket: env(
+      "BUCKET",
+      "AWS_S3_BUCKET_NAME",
+      "AWS_S3_BUCKET"
+    ),
+
+    accessKeyId: env(
+      "ACCESS_KEY_ID",
+      "AWS_ACCESS_KEY_ID"
+    ),
+
+    secretAccessKey: env(
+      "SECRET_ACCESS_KEY",
+      "AWS_SECRET_ACCESS_KEY"
+    ),
+
+    endpoint,
+
+    region:
+      env(
+        "REGION",
+        "AWS_DEFAULT_REGION"
+      ) || "auto",
+  };
+}
+
+function requireConfig() {
+  const config = getConfig();
   const missing = [];
 
-  if (!bucket) missing.push("BUCKET");
-  if (!accessKeyId) missing.push("ACCESS_KEY_ID");
-  if (!secretAccessKey) missing.push("SECRET_ACCESS_KEY");
-  if (!endpoint) missing.push("ENDPOINT");
+  if (!config.bucket) missing.push("BUCKET");
+  if (!config.accessKeyId) missing.push("ACCESS_KEY_ID");
+  if (!config.secretAccessKey) missing.push("SECRET_ACCESS_KEY");
+  if (!config.endpoint) missing.push("ENDPOINT");
 
   if (missing.length) {
     throw new Error(
-      `Storage is not configured. Missing environment variables: ${missing.join(", ")}`
+      `Storage is not configured. Missing environment variables: ${missing.join(
+        ", "
+      )}`
     );
   }
+
+  try {
+    const url = new URL(config.endpoint);
+
+    if (!["http:", "https:"].includes(url.protocol)) {
+      throw new Error("Endpoint must use http:// or https://");
+    }
+  } catch {
+    throw new Error(
+      `Invalid storage ENDPOINT: ${config.endpoint}`
+    );
+  }
+
+  return config;
 }
 
 function forcePathStyle() {
-  const value = String(process.env.S3_FORCE_PATH_STYLE || "").trim().toLowerCase();
+  const value = env("S3_FORCE_PATH_STYLE").toLowerCase();
 
-  if (["1", "true", "yes", "on"].includes(value)) return true;
-  if (["0", "false", "no", "off"].includes(value)) return false;
+  if (["1", "true", "yes", "on"].includes(value)) {
+    return true;
+  }
 
-  // Railway Buckets normally use virtual-hosted-style URLs. Keep that
-  // as the default, while allowing older/path-style buckets to opt in.
+  if (["0", "false", "no", "off"].includes(value)) {
+    return false;
+  }
+
+  // Railway Buckets normally use virtual-hosted style.
   return false;
 }
 
-export function getStorageClient() {
-  requireStorageConfig();
-
-  return new S3Client({
-    region,
-    endpoint,
-    credentials: {
-      accessKeyId,
-      secretAccessKey,
-    },
-    forcePathStyle: forcePathStyle(),
-  });
-}
-
 function encodeStorageKey(key) {
-  return key
+  return String(key)
     .split("/")
     .map((part) => encodeURIComponent(part))
     .join("/");
@@ -68,9 +127,81 @@ function contentTypeFromKey(key) {
     gif: "image/gif",
     svg: "image/svg+xml",
     pdf: "application/pdf",
+    txt: "text/plain",
+    csv: "text/csv",
+    mp4: "video/mp4",
+    mov: "video/quicktime",
   };
 
   return types[ext] || "application/octet-stream";
+}
+
+function resolveContentType(contentType, key) {
+  const supplied = String(contentType || "")
+    .trim()
+    .toLowerCase();
+
+  if (
+    !supplied ||
+    supplied === "application/octet-stream" ||
+    supplied === "binary/octet-stream"
+  ) {
+    return contentTypeFromKey(key);
+  }
+
+  return supplied;
+}
+
+let client = null;
+let clientSignature = "";
+
+export function getStorageClient() {
+  const config = requireConfig();
+
+  const signature = [
+    config.endpoint,
+    config.region,
+    config.accessKeyId,
+    config.bucket,
+    forcePathStyle(),
+  ].join("|");
+
+  // Recreate the client automatically if Railway environment
+  // configuration changes during the process lifetime.
+  if (client && clientSignature === signature) {
+    return client;
+  }
+
+  const httpsAgent = new https.Agent({
+    keepAlive: false,
+    maxSockets: 25,
+    maxFreeSockets: 0,
+  });
+
+  client = new S3Client({
+    region: config.region,
+    endpoint: config.endpoint,
+
+    credentials: {
+      accessKeyId: config.accessKeyId,
+      secretAccessKey: config.secretAccessKey,
+    },
+
+    forcePathStyle: forcePathStyle(),
+
+    // Let the AWS SDK retry transient network failures.
+    maxAttempts: 5,
+
+    requestHandler: new NodeHttpHandler({
+      connectionTimeout: 20_000,
+      socketTimeout: 120_000,
+      httpsAgent,
+    }),
+  });
+
+  clientSignature = signature;
+
+  return client;
 }
 
 export async function uploadToStorage({
@@ -79,7 +210,7 @@ export async function uploadToStorage({
   contentType,
   contentLength,
 }) {
-  requireStorageConfig();
+  const config = requireConfig();
 
   if (!key || typeof key !== "string") {
     throw new Error("Storage object key is required.");
@@ -89,21 +220,38 @@ export async function uploadToStorage({
     throw new Error("Storage upload body is required.");
   }
 
-  const client = getStorageClient();
-  const resolvedContentType =
-    contentType || contentTypeFromKey(key);
+  const resolvedContentType = resolveContentType(
+    contentType,
+    key
+  );
 
   const command = new PutObjectCommand({
-    Bucket: bucket,
+    Bucket: config.bucket,
     Key: key,
     Body: body,
     ContentType: resolvedContentType,
+
     ...(Number.isFinite(contentLength)
-      ? { ContentLength: contentLength }
+      ? {
+          ContentLength: contentLength,
+        }
       : {}),
   });
 
-  await client.send(command);
+  try {
+    await getStorageClient().send(command);
+  } catch (error) {
+    console.error("S3 upload failed:", {
+      name: error?.name,
+      code: error?.code,
+      message: error?.message,
+      endpoint: config.endpoint,
+      bucket: config.bucket,
+      region: config.region,
+    });
+
+    throw error;
+  }
 
   return {
     key,
@@ -113,20 +261,31 @@ export async function uploadToStorage({
 }
 
 export async function getFromStorage(key) {
-  requireStorageConfig();
+  const config = requireConfig();
 
   if (!key || typeof key !== "string") {
     throw new Error("Storage object key is required.");
   }
 
-  const client = getStorageClient();
-
   const command = new GetObjectCommand({
-    Bucket: bucket,
+    Bucket: config.bucket,
     Key: key,
   });
 
-  return client.send(command);
+  try {
+    return await getStorageClient().send(command);
+  } catch (error) {
+    console.error("S3 download failed:", {
+      name: error?.name,
+      code: error?.code,
+      message: error?.message,
+      endpoint: config.endpoint,
+      bucket: config.bucket,
+      region: config.region,
+    });
+
+    throw error;
+  }
 }
 
 export function getContentTypeFromKey(key) {
