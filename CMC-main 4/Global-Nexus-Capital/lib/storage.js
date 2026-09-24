@@ -21,6 +21,17 @@ function requireStorageConfig() {
   }
 }
 
+function forcePathStyle() {
+  const value = String(process.env.S3_FORCE_PATH_STYLE || "").trim().toLowerCase();
+
+  if (["1", "true", "yes", "on"].includes(value)) return true;
+  if (["0", "false", "no", "off"].includes(value)) return false;
+
+  // Railway Buckets normally use virtual-hosted-style URLs. Keep that
+  // as the default, while allowing older/path-style buckets to opt in.
+  return false;
+}
+
 export function getStorageClient() {
   requireStorageConfig();
 
@@ -31,8 +42,35 @@ export function getStorageClient() {
       accessKeyId,
       secretAccessKey,
     },
-    forcePathStyle: false,
+    forcePathStyle: forcePathStyle(),
   });
+}
+
+function encodeStorageKey(key) {
+  return key
+    .split("/")
+    .map((part) => encodeURIComponent(part))
+    .join("/");
+}
+
+function contentTypeFromKey(key) {
+  const ext = String(key || "")
+    .split("?")[0]
+    .split(".")
+    .pop()
+    ?.toLowerCase();
+
+  const types = {
+    jpg: "image/jpeg",
+    jpeg: "image/jpeg",
+    png: "image/png",
+    webp: "image/webp",
+    gif: "image/gif",
+    svg: "image/svg+xml",
+    pdf: "application/pdf",
+  };
+
+  return types[ext] || "application/octet-stream";
 }
 
 export async function uploadToStorage({
@@ -52,12 +90,14 @@ export async function uploadToStorage({
   }
 
   const client = getStorageClient();
+  const resolvedContentType =
+    contentType || contentTypeFromKey(key);
 
   const command = new PutObjectCommand({
     Bucket: bucket,
     Key: key,
     Body: body,
-    ContentType: contentType || "application/octet-stream",
+    ContentType: resolvedContentType,
     ...(Number.isFinite(contentLength)
       ? { ContentLength: contentLength }
       : {}),
@@ -67,10 +107,8 @@ export async function uploadToStorage({
 
   return {
     key,
-    url: `/api/media/${key
-      .split("/")
-      .map((part) => encodeURIComponent(part))
-      .join("/")}`,
+    contentType: resolvedContentType,
+    url: `/api/media/${encodeStorageKey(key)}`,
   };
 }
 
@@ -89,4 +127,8 @@ export async function getFromStorage(key) {
   });
 
   return client.send(command);
+}
+
+export function getContentTypeFromKey(key) {
+  return contentTypeFromKey(key);
 }
