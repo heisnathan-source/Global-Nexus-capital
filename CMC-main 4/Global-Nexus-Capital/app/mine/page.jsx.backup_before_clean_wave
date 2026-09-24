@@ -1,0 +1,1101 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+
+function money(value) {
+  return `GHS ${Number(value || 0).toLocaleString("en-GH", {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  })}`;
+}
+
+function formatDate(value) {
+  if (!value) return "—";
+
+  const date = new Date(value);
+
+  if (Number.isNaN(date.getTime())) return "—";
+
+  return date.toLocaleDateString("en-GB");
+}
+
+function memberId(id) {
+  if (!id) return "CMC-—";
+
+  const clean = String(id).replace(/-/g, "").toUpperCase();
+
+  return `CMC-${clean.slice(-8)}`;
+}
+
+
+const AVATARS = [
+  { id: "avatar-1", name: "Classic", skin: "#8D5524", hair: "#17120F", shirt: "#31548F", style: "crop" },
+  { id: "avatar-2", name: "Modern", skin: "#A66A3F", hair: "#211814", shirt: "#263238", style: "fade" },
+  { id: "avatar-3", name: "Smart", skin: "#C68642", hair: "#17120F", shirt: "#426B4A", style: "waves" },
+  { id: "avatar-4", name: "Bold", skin: "#6B3E26", hair: "#100D0B", shirt: "#7A3F4A", style: "high" },
+  { id: "avatar-5", name: "Fresh", skin: "#D19A6A", hair: "#5A3825", shirt: "#A76B35", style: "round" },
+  { id: "avatar-6", name: "Executive", skin: "#70452D", hair: "#16120F", shirt: "#34495E", style: "sideCrop" },
+  { id: "avatar-7", name: "Elegant", skin: "#8D5524", hair: "#18120F", shirt: "#874B72", style: "bob" },
+  { id: "avatar-8", name: "Friendly", skin: "#C68642", hair: "#3B2418", shirt: "#3C7180", style: "soft" },
+  { id: "avatar-9", name: "Classy", skin: "#6B3E26", hair: "#15100D", shirt: "#9B6846", style: "braid" },
+  { id: "avatar-10", name: "Charming", skin: "#A66A3F", hair: "#2A1913", shirt: "#566F39", style: "bun" },
+  { id: "avatar-11", name: "Professional", skin: "#D19A6A", hair: "#493024", shirt: "#536B9B", style: "straight" },
+  { id: "avatar-12", name: "Trendy", skin: "#70452D", hair: "#18110E", shirt: "#B15D54", style: "side" },
+];
+
+function AvatarIllustration({ avatar, animate = false, size = 120 }) {
+  const female = avatar.id === "avatar-7" ||
+    avatar.id === "avatar-8" ||
+    avatar.id === "avatar-9" ||
+    avatar.id === "avatar-10" ||
+    avatar.id === "avatar-11" ||
+    avatar.id === "avatar-12";
+
+  const hair = (() => {
+    switch (avatar.style) {
+      case "fade":
+        return (
+          <path
+            d="M61 72 C59 48 74 29 100 28 C126 29 141 49 139 72
+               L130 62 L124 48 L115 56 L106 45 L97 56 L88 46
+               L79 57 L70 51 L65 67 Z"
+            fill={avatar.hair}
+          />
+        );
+
+      case "waves":
+        return (
+          <path
+            d="M58 73 C55 53 63 38 77 30
+               C85 26 92 29 98 34
+               C105 27 114 29 121 34
+               C135 39 144 55 141 74
+               C133 66 128 59 123 52
+               C117 58 111 59 106 53
+               C100 60 94 60 88 54
+               C83 60 76 59 71 52
+               C66 60 62 67 58 73 Z"
+            fill={avatar.hair}
+          />
+        );
+
+      case "high":
+        return (
+          <path
+            d="M60 72 C56 52 65 36 79 30
+               C85 27 91 27 95 30
+               C100 23 109 23 114 30
+               C132 28 143 48 140 72
+               L132 61 L125 46 L116 56 L108 43
+               L99 55 L91 43 L82 56 L73 47 L67 62 Z"
+            fill={avatar.hair}
+          />
+        );
+
+      case "round":
+        return (
+          <path
+            d="M58 76 C55 51 71 28 100 28
+               C129 28 145 51 142 76
+               L132 67 L126 53 L118 59
+               L110 48 L100 58 L91 48 L82 59
+               L74 51 L68 66 Z"
+            fill={avatar.hair}
+          />
+        );
+
+      case "sideCrop":
+        return (
+          <path
+            d="M60 72 C57 48 72 28 99 27
+               C124 27 140 44 140 67
+               L132 63 L126 50 L116 57
+               L107 46 L98 56 L88 46 L79 57
+               L69 50 L65 66 Z"
+            fill={avatar.hair}
+          />
+        );
+
+      case "bob":
+        return (
+          <path
+            d="M57 99 C51 69 57 42 77 29
+               C91 20 111 22 125 32
+               C143 46 149 72 143 99
+               L133 121 L126 105 L126 61
+               C117 52 109 48 99 48
+               C88 48 78 53 72 61
+               L72 105 L65 121 Z"
+            fill={avatar.hair}
+          />
+        );
+
+      case "soft":
+        return (
+          <path
+            d="M57 84 C53 56 70 30 99 28
+               C129 29 146 55 142 84
+               L134 73 L128 57 L120 64
+               L112 51 L102 61 L93 51
+               L83 63 L75 54 L67 71 Z"
+            fill={avatar.hair}
+          />
+        );
+
+      case "braid":
+        return (
+          <>
+            <path
+              d="M60 83 C55 56 71 31 100 29
+                 C129 31 145 56 140 83
+                 L132 70 L126 53 L117 60 L108 49
+                 L99 59 L90 49 L81 60 L73 52 L66 70 Z"
+              fill={avatar.hair}
+            />
+            <path
+              d="M140 67 C151 79 149 91 141 99
+                 C150 108 148 119 140 126"
+              fill="none"
+              stroke={avatar.hair}
+              strokeWidth="9"
+              strokeLinecap="round"
+            />
+          </>
+        );
+
+      case "bun":
+        return (
+          <>
+            <circle cx="100" cy="28" r="17" fill={avatar.hair} />
+            <path
+              d="M59 78 C55 52 72 31 100 30
+                 C128 31 145 52 141 78
+                 L132 67 L125 52 L116 60 L107 49
+                 L99 59 L90 49 L81 60 L73 52 L66 69 Z"
+              fill={avatar.hair}
+            />
+          </>
+        );
+
+      case "straight":
+        return (
+          <path
+            d="M58 102 L58 70 C58 44 75 26 100 26
+               C125 26 142 44 142 70 L142 108
+               L128 121 L128 62
+               C119 51 111 47 100 47
+               C89 47 80 51 72 62 L72 121 Z"
+            fill={avatar.hair}
+          />
+        );
+
+      case "side":
+        return (
+          <path
+            d="M57 94 C53 64 64 39 85 29
+               C103 21 123 28 135 43
+               C144 55 146 72 141 88
+               L132 75 L125 55
+               C117 48 108 44 98 45
+               C83 46 72 57 68 74 L68 106 Z"
+            fill={avatar.hair}
+          />
+        );
+
+      default:
+        return (
+          <path
+            d="M60 72 C58 48 72 26 100 25
+               C128 26 142 48 140 72
+               L132 64 L126 50 L119 58
+               L111 48 L103 57 L94 47
+               L84 57 L76 49 L69 64 Z"
+            fill={avatar.hair}
+          />
+        );
+    }
+  })();
+
+  return (
+    <svg
+      viewBox="0 0 200 200"
+      width={size}
+      height={size}
+      aria-hidden="true"
+      style={{ display: "block" }}
+    >
+      <g
+        style={{
+          transformOrigin: "100px 105px",
+          animation: animate
+            ? "cmcAvatarFloat 1.2s ease-in-out 2"
+            : "none",
+        }}
+      >
+        <path
+          d="M48 196 C50 169 62 151 82 146
+             C92 143 108 143 118 146
+             C138 151 150 169 152 196 Z"
+          fill={avatar.shirt}
+        />
+
+        <path
+          d="M82 146 L100 160 L118 146"
+          fill="none"
+          stroke="rgba(255,255,255,.42)"
+          strokeWidth="3"
+          strokeLinecap="round"
+        />
+
+        <path
+          d="M82 126 C84 140 82 145 76 150
+             L124 150 C118 145 116 140 118 126 Z"
+          fill={avatar.skin}
+        />
+
+        <circle cx="61" cy="91" r="12" fill={avatar.skin} />
+        <circle cx="139" cy="91" r="12" fill={avatar.skin} />
+
+        <path
+          d="M63 63 C67 43 82 32 100 32
+             C118 32 133 43 137 63
+             L137 99 C137 122 121 139 100 139
+             C79 139 63 122 63 99 Z"
+          fill={avatar.skin}
+        />
+
+        {hair}
+
+        <ellipse cx="83" cy="88" rx="5" ry="6" fill="#171717" />
+        <ellipse cx="117" cy="88" rx="5" ry="6" fill="#171717" />
+
+        <circle cx="84.5" cy="86.5" r="1.5" fill="#fff" />
+        <circle cx="118.5" cy="86.5" r="1.5" fill="#fff" />
+
+        <path
+          d="M76 78 Q83 74 90 77"
+          fill="none"
+          stroke="#3A2117"
+          strokeWidth="3"
+          strokeLinecap="round"
+        />
+
+        <path
+          d="M110 77 Q117 74 124 78"
+          fill="none"
+          stroke="#3A2117"
+          strokeWidth="3"
+          strokeLinecap="round"
+        />
+
+        <path
+          d="M99 88 Q96 99 100 101 Q103 102 105 100"
+          fill="none"
+          stroke="rgba(90,45,30,.42)"
+          strokeWidth="2.2"
+          strokeLinecap="round"
+        />
+
+        <path
+          d="M91 110 Q100 116 109 110"
+          fill="none"
+          stroke="#5C3026"
+          strokeWidth="2.6"
+          strokeLinecap="round"
+        />
+
+        <circle
+          cx="100"
+          cy="177"
+          r="4"
+          fill="rgba(255,255,255,.25)"
+        />
+      </g>
+
+      <style>
+        {`
+          @keyframes cmcAvatarFloat {
+            0%, 100% {
+              transform: translateY(0) rotate(0deg);
+            }
+            25% {
+              transform: translateY(-2px) rotate(-1deg);
+            }
+            50% {
+              transform: translateY(0) rotate(0deg);
+            }
+            75% {
+              transform: translateY(-1px) rotate(1deg);
+            }
+          }
+        `}
+      </style>
+    </svg>
+  );
+}
+
+export default function MinePage() {
+  const router = useRouter();
+
+  const [account, setAccount] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+
+  const [showLogout, setShowLogout] = useState(false);
+  const [loggingOut, setLoggingOut] = useState(false);
+
+  const [selectedAvatar, setSelectedAvatar] = useState("avatar-1");
+  const [showAvatarPicker, setShowAvatarPicker] = useState(false);
+  const [avatarAnimating, setAvatarAnimating] = useState(false);
+
+  useEffect(() => {
+    try {
+      const saved = window.localStorage.getItem("cmc_profile_avatar");
+
+      if (saved && AVATARS.some((avatar) => avatar.id === saved)) {
+        setSelectedAvatar(saved);
+      }
+    } catch {
+      // Ignore localStorage errors.
+    }
+  }, []);
+
+  useEffect(() => {
+    let timeout;
+
+    const interval = window.setInterval(() => {
+      setAvatarAnimating(true);
+
+      timeout = window.setTimeout(() => {
+        setAvatarAnimating(false);
+      }, 1900);
+    }, 30000);
+
+    return () => {
+      window.clearInterval(interval);
+
+      if (timeout) {
+        window.clearTimeout(timeout);
+      }
+    };
+  }, []);
+
+  function chooseAvatar(id) {
+    setSelectedAvatar(id);
+
+    try {
+      window.localStorage.setItem("cmc_profile_avatar", id);
+    } catch {
+      // Ignore localStorage errors.
+    }
+
+    setShowAvatarPicker(false);
+  }
+
+
+  useEffect(() => {
+    async function loadAccount() {
+      try {
+        const response = await fetch("/api/account", {
+          credentials: "include",
+          cache: "no-store",
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(
+            data?.error || "Unable to load account."
+          );
+        }
+
+        setAccount(data.account || data);
+      } catch (err) {
+        setError(
+          err.message || "Unable to load account."
+        );
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    loadAccount();
+  }, []);
+
+  async function logout() {
+    try {
+      setLoggingOut(true);
+
+      const response = await fetch(
+        "/api/auth/logout",
+        {
+          method: "POST",
+          credentials: "include",
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Unable to log out.");
+      }
+
+      router.replace("/login");
+      router.refresh();
+    } catch (err) {
+      setError(
+        err.message || "Unable to log out."
+      );
+
+      setLoggingOut(false);
+    }
+  }
+
+  const balance = Number(
+    account?.balance ??
+    account?.available_balance ??
+    account?.wallet_balance ??
+    0
+  );
+
+  const rank =
+    account?.rank_name ||
+    account?.rank ||
+    "STARTER";
+
+  const name =
+    account?.name ||
+    "CMC Member";
+
+  const phone =
+    account?.phone ||
+    "—";
+
+  const registrationDate =
+    account?.created_at ||
+    account?.registration_date;
+
+  return (
+    <main className="mobile-shell scroll-page mine-modern-page">
+
+      <header className="topbar mine-modern-topbar">
+
+        <div>
+          <div className="eyebrow">CMC ACCOUNT</div>
+
+          <h1>Mine</h1>
+
+          <p className="muted">
+            Your account and CMC services
+          </p>
+        </div>
+
+        <div className="mine-top-actions">
+
+          <Link
+            className="icon-button"
+            href="/"
+            aria-label="Home"
+          >
+            ⌂
+          </Link>
+
+          <Link
+            className="icon-button"
+            href="/settings"
+            aria-label="Settings"
+          >
+            ⚙
+          </Link>
+
+          <button
+            type="button"
+            className="icon-button"
+            onClick={() => setShowLogout(true)}
+            aria-label="Logout"
+          >
+            ⇥
+          </button>
+
+        </div>
+
+      </header>
+
+      <section className="admin-card" style={{
+        marginBottom: 14,
+        overflow: "hidden",
+      }}>
+        <div className="admin-card-head">
+          <div>
+            <strong>CMC Profile</strong>
+            <p className="muted">
+              Your personal profile avatar
+            </p>
+          </div>
+
+          <button
+            type="button"
+            className="mine-arrow-button"
+            onClick={() => setShowAvatarPicker(true)}
+            aria-label="Change avatar"
+          >
+            ✎
+          </button>
+        </div>
+
+        <div style={{
+          display: "flex",
+          alignItems: "center",
+          gap: 16,
+          marginTop: 8,
+        }}>
+          <div style={{
+            width: 112,
+            height: 112,
+            minWidth: 112,
+            borderRadius: 28,
+            display: "grid",
+            placeItems: "center",
+            background: "linear-gradient(145deg,#eef3ff,#ffffff)",
+            boxShadow: "0 8px 24px rgba(20,40,80,.10)",
+            overflow: "hidden",
+          }}>
+            <AvatarIllustration
+              avatar={
+                AVATARS.find((avatar) => avatar.id === selectedAvatar) ||
+                AVATARS[0]
+              }
+              animate={avatarAnimating}
+              size={116}
+            />
+          </div>
+
+          <div>
+            <strong style={{
+              display: "block",
+              fontSize: 18,
+            }}>
+              {name}
+            </strong>
+
+            <span className="muted">
+              {(
+                AVATARS.find((avatar) => avatar.id === selectedAvatar) ||
+                AVATARS[0]
+              ).name}
+            </span>
+
+            <button
+              type="button"
+              className="button secondary"
+              style={{
+                marginTop: 10,
+                padding: "8px 13px",
+                fontSize: 13,
+              }}
+              onClick={() => setShowAvatarPicker(true)}
+            >
+              Change Avatar
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <section className="balance-card mine-modern-balance">
+
+        <div className="mine-balance-label">
+
+          <span>
+            Available Balance
+          </span>
+
+          <span className="mine-live-dot">
+            ● Active
+          </span>
+
+        </div>
+
+        <strong>
+          {loading
+            ? "GHS —"
+            : money(balance)}
+        </strong>
+
+        <div className="account-meta mine-modern-meta">
+
+          <div>
+            <span>Member</span>
+
+            <strong>
+              {name}
+            </strong>
+          </div>
+
+          <div>
+            <span>Rank</span>
+
+            <strong>
+              {rank}
+            </strong>
+          </div>
+
+        </div>
+
+      </section>
+
+      <section className="admin-card mine-info-card">
+
+        <div className="admin-card-head">
+
+          <div>
+
+            <strong>
+              Account Information
+            </strong>
+
+            <p className="muted">
+              Your registered CMC account details
+            </p>
+
+          </div>
+
+          <span className="mine-section-icon">
+            ◉
+          </span>
+
+        </div>
+
+        <div className="mine-info-list">
+
+          <div className="list-row">
+
+            <div>
+
+              <span className="mine-info-label">
+                CMC Member ID
+              </span>
+
+              <strong>
+                {memberId(account?.id)}
+              </strong>
+
+            </div>
+
+            <span className="mine-row-icon">
+              ID
+            </span>
+
+          </div>
+
+          <div className="list-row">
+
+            <div>
+
+              <span className="mine-info-label">
+                Phone Number
+              </span>
+
+              <strong>
+                {phone}
+              </strong>
+
+            </div>
+
+            <span className="mine-row-icon">
+              ☎
+            </span>
+
+          </div>
+
+          <div className="list-row">
+
+            <div>
+
+              <span className="mine-info-label">
+                Registration Date
+              </span>
+
+              <strong>
+                {formatDate(registrationDate)}
+              </strong>
+
+            </div>
+
+            <span className="mine-row-icon">
+              ◷
+            </span>
+
+          </div>
+
+        </div>
+
+      </section>
+
+      <section className="feature-grid mine-money-grid">
+
+        <Link
+          href="/deposit"
+          className="feature-card mine-money-card mine-deposit-card"
+        >
+
+          <span className="feature-icon">
+            ＋
+          </span>
+
+          <span>
+            Deposit
+          </span>
+
+          <small>
+            Add funds
+          </small>
+
+        </Link>
+
+        <Link
+          href="/withdrawal"
+          className="feature-card mine-money-card mine-withdraw-card"
+        >
+
+          <span className="feature-icon">
+            ↗️
+          </span>
+
+          <span>
+            Withdrawal
+          </span>
+
+          <small>
+            Withdraw funds
+          </small>
+
+        </Link>
+
+      </section>
+
+      <section className="admin-card mine-events-card">
+
+        <div className="admin-card-head">
+
+          <div>
+
+            <strong>
+              CMC Events
+            </strong>
+
+            <p className="muted">
+              View current active CMC events
+            </p>
+
+          </div>
+
+          <Link
+            className="mine-arrow-button"
+            href="/events"
+            aria-label="View Events"
+          >
+            ›
+          </Link>
+
+        </div>
+
+      </section>
+
+      <section className="mine-services-section">
+
+        <div className="section-title mine-services-heading">
+
+          <div>
+
+            <span className="eyebrow">
+              EXPLORE
+            </span>
+
+            <h2>
+              CMC Services
+            </h2>
+
+          </div>
+
+          <span className="mine-service-count">
+            10+
+          </span>
+
+        </div>
+
+        <div className="feature-grid mine-services-grid">
+
+          <Link
+            href="/lucky-cards"
+            className="feature-card"
+          >
+            <span className="feature-icon">🎴</span>
+            <span>Raffle Tickets</span>
+          </Link>
+
+          <Link
+            href="/points-card"
+            className="feature-card"
+          >
+            <span className="feature-icon">🎟️</span>
+            <span>Points Card</span>
+          </Link>
+
+          <Link
+            href="/team-expansion"
+            className="feature-card"
+          >
+            <span className="feature-icon">👥</span>
+            <span>My Team</span>
+          </Link>
+
+          <Link
+            href="/financial-records"
+            className="feature-card"
+          >
+            <span className="feature-icon">▤</span>
+            <span>Financial Records</span>
+          </Link>
+
+          <Link
+            href="/management-positions"
+            className="feature-card"
+          >
+            <span className="feature-icon">◆</span>
+            <span>Position Management</span>
+          </Link>
+
+          <Link
+            href="/fund-products"
+            className="feature-card"
+          >
+            <span className="feature-icon">◈</span>
+            <span>Financial Management Fund</span>
+          </Link>
+
+          <Link
+            href="/fund-products"
+            className="feature-card"
+          >
+            <span className="feature-icon">◎</span>
+            <span>Social Security Fund</span>
+          </Link>
+
+          <Link
+            href="/account-security"
+            className="feature-card"
+          >
+            <span className="feature-icon">🔒</span>
+            <span>Account Security</span>
+          </Link>
+
+          <Link
+            href="/business-license"
+            className="feature-card"
+          >
+            <span className="feature-icon">▣</span>
+            <span>Business License</span>
+          </Link>
+
+          <Link
+            href="/privacy-policy"
+            className="feature-card"
+          >
+            <span className="feature-icon">📄</span>
+            <span>Privacy Policy</span>
+          </Link>
+
+          <Link
+            href="/app-download"
+            className="feature-card"
+          >
+            <span className="feature-icon">📱</span>
+            <span>CMC App</span>
+          </Link>
+
+        </div>
+
+      </section>
+
+      {error && (
+        <section className="admin-card mine-error-card">
+          <p>{error}</p>
+        </section>
+      )}
+
+      {showAvatarPicker && (
+        <div
+          role="dialog"
+          aria-modal="true"
+          onClick={() => setShowAvatarPicker(false)}
+          style={{
+            position: "fixed",
+            inset: 0,
+            zIndex: 100,
+            background: "rgba(8,14,24,.62)",
+            display: "flex",
+            alignItems: "flex-end",
+            justifyContent: "center",
+            padding: 12,
+          }}
+        >
+          <section
+            className="admin-card"
+            onClick={(event) => event.stopPropagation()}
+            style={{
+              width: "100%",
+              maxWidth: 520,
+              maxHeight: "88vh",
+              overflowY: "auto",
+              margin: 0,
+              borderRadius: 24,
+            }}
+          >
+            <div className="admin-card-head">
+              <div>
+                <strong>Choose Your Avatar</strong>
+                <p className="muted">
+                  Select a character for your profile.
+                </p>
+              </div>
+
+              <button
+                type="button"
+                className="icon-button"
+                onClick={() => setShowAvatarPicker(false)}
+              >
+                ×
+              </button>
+            </div>
+
+            <div style={{
+              display: "grid",
+              gridTemplateColumns: "repeat(2,minmax(0,1fr))",
+              gap: 12,
+              marginTop: 14,
+            }}>
+              {AVATARS.map((avatar) => {
+                const selected = avatar.id === selectedAvatar;
+
+                return (
+                  <button
+                    key={avatar.id}
+                    type="button"
+                    onClick={() => chooseAvatar(avatar.id)}
+                    style={{
+                      border: selected
+                        ? "2px solid #31548F"
+                        : "1px solid rgba(20,35,60,.10)",
+                      borderRadius: 20,
+                      padding: "8px 6px 12px",
+                      background: selected
+                        ? "rgba(49,84,143,.08)"
+                        : "#fff",
+                      cursor: "pointer",
+                      textAlign: "center",
+                    }}
+                  >
+                    <div style={{
+                      height: 145,
+                      display: "grid",
+                      placeItems: "center",
+                    }}>
+                      <AvatarIllustration
+                        avatar={avatar}
+                        size={140}
+                      />
+                    </div>
+
+                    <strong style={{
+                      display: "block",
+                      fontSize: 14,
+                    }}>
+                      {avatar.name}
+                    </strong>
+
+                    {selected && (
+                      <span
+                        className="badge"
+                        style={{
+                          display: "inline-block",
+                          marginTop: 5,
+                        }}
+                      >
+                        Selected
+                      </span>
+                    )}
+                  </button>
+                );
+              })}
+            </div>
+
+            <button
+              type="button"
+              className="button"
+              style={{
+                width: "100%",
+                marginTop: 14,
+              }}
+              onClick={() => setShowAvatarPicker(false)}
+            >
+              Done
+            </button>
+          </section>
+        </div>
+      )}
+
+      {showLogout && (
+
+        <div
+          className="logout-overlay"
+          role="dialog"
+          aria-modal="true"
+        >
+
+          <div className="logout-modal">
+
+            <div className="logout-icon">
+              ⇥
+            </div>
+
+            <h2>
+              Log out?
+            </h2>
+
+            <p>
+              Are you sure you want to log out of your CMC account?
+            </p>
+
+            <div className="logout-actions">
+
+              <button
+                type="button"
+                className="logout-cancel"
+                disabled={loggingOut}
+                onClick={() => setShowLogout(false)}
+              >
+                Cancel
+              </button>
+
+              <button
+                type="button"
+                className="logout-confirm"
+                disabled={loggingOut}
+                onClick={logout}
+              >
+                {loggingOut
+                  ? "Logging out..."
+                  : "Log out"}
+              </button>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      )}
+
+    </main>
+  );
+}

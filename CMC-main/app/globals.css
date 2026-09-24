@@ -1,0 +1,3737 @@
+*{box-sizing:border-box}html,body{margin:0;padding:0;background:#eef4ff;color:#10203a;font-family:Arial,sans-serif}a{text-decoration:none;color:inherit}.mobile-shell{max-width:520px;min-height:100vh;margin:auto;padding:22px 16px 90px}.topbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px}.eyebrow{font-size:12px;font-weight:800;letter-spacing:2px;color:#2563eb}.topbar h1{margin:4px 0;font-size:25px}.muted{margin:0;color:#6b7a90;font-size:13px}.icon-button{width:42px;height:42px;border-radius:14px;background:#fff;display:grid;place-items:center;box-shadow:0 5px 20px #d8e2f2}.balance-card{padding:22px;border-radius:24px;background:linear-gradient(135deg,#1769e0,#58a6ff);color:#fff;box-shadow:0 14px 30px #b8cfee;margin-bottom:24px}.balance-card span{font-size:13px;opacity:.9}.balance-card strong{display:block;font-size:32px;margin:8px 0 18px}.account-meta{display:flex;justify-content:space-between;border-top:1px solid #ffffff55;padding-top:12px;font-size:12px}.section-title h2{font-size:18px}.feature-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.feature-card{min-height:92px;background:#fff;border-radius:20px;padding:15px;display:flex;flex-direction:column;justify-content:space-between;box-shadow:0 6px 18px #dce6f5;font-weight:700;font-size:13px}.feature-icon{width:34px;height:34px;border-radius:12px;background:#eaf2ff;display:grid;place-items:center;color:#1769e0}.bottom-nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:min(520px,100%);display:grid;grid-template-columns:repeat(5,1fr);padding:12px 8px calc(12px + env(safe-area-inset-bottom));background:#fff;border-top:1px solid #e6edf7;box-shadow:0 -5px 20px #dbe4f2;font-size:11px;text-align:center}.bottom-nav a{color:#77859a}.bottom-nav a.active{color:#1769e0;font-weight:800}@media(min-width:700px){.mobile-shell{padding-top:40px}}
+.profile-card{display:flex;gap:14px;align-items:center;background:#fff;border-radius:22px;padding:18px;box-shadow:0 6px 18px #dce6f5;margin-bottom:14px}.avatar{width:54px;height:54px;border-radius:18px;background:#eaf2ff;color:#1769e0;display:grid;place-items:center;font-size:22px;font-weight:800}.profile-card strong{font-size:17px}.stats-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}.stat{background:#fff;border-radius:18px;padding:15px;box-shadow:0 5px 15px #dce6f5}.stat span,.info-strip span{display:block;font-size:11px;color:#75849a}.stat strong{display:block;margin-top:7px;font-size:16px}.info-strip{background:#fff;border-radius:18px;padding:15px;display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px}.info-strip strong{display:block;margin-top:5px;font-size:12px}.promo-placeholder{margin:20px 0;padding:22px;border-radius:22px;background:linear-gradient(135deg,#173d8f,#3e8be8);color:#fff}.promo-placeholder .muted{color:#e8f1ff;margin:7px 0 14px}.primary-button{display:inline-block;background:#fff;color:#1769e0;font-weight:800;padding:11px 16px;border-radius:12px;font-size:13px}.service-list{display:flex;flex-direction:column;gap:10px}.service-row{background:#fff;border-radius:16px;padding:17px;display:flex;justify-content:space-between;box-shadow:0 4px 14px #dce6f5;font-weight:700;font-size:13px}.record-card{background:#fff;border-radius:18px;padding:17px;box-shadow:0 5px 15px #dce6f5;display:grid;gap:6px}.record-card span{font-size:12px;color:#75849a}.record-card b{font-size:18px}
+
+.form-card,.rules-card,.empty-document{background:#fff;border-radius:22px;padding:20px;box-shadow:0 6px 18px #dce6f5;margin:16px 0}.form-card{display:grid;gap:10px}.form-card label{font-size:12px;font-weight:700;color:#51647e}.form-card input{width:100%;border:1px solid #d8e2ef;border-radius:13px;padding:14px;font-size:14px;outline:none}.form-card .primary-button{border:0;cursor:pointer;width:100%}.rules-card h2{font-size:17px;margin-top:0}.rules-card li{margin:9px 0;font-size:12px;color:#586a82}.small-heading{font-size:16px}.amount-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.amount-button{border:0;background:#fff;border-radius:16px;padding:17px;font-weight:800;color:#1769e0;box-shadow:0 5px 15px #dce6f5}.fund-card{background:#fff;border-radius:20px;padding:14px;display:grid;grid-template-columns:70px 1fr auto;gap:12px;align-items:center;box-shadow:0 5px 15px #dce6f5}.fund-card h2{font-size:14px;margin:0 0 5px}.fund-image{height:62px;border-radius:15px;background:#eaf2ff;color:#1769e0;display:grid;place-items:center;font-weight:900}.fund-card .primary-button{border:0}.empty-document{min-height:260px;display:grid;place-items:center;text-align:center}.blank-page{min-height:65vh;background:#fff;border-radius:18px}.empty-document strong{font-size:17px}
+
+.admin-card,.login-card{background:#fff;border-radius:22px;padding:20px;box-shadow:0 6px 18px #dce6f5;margin:16px 0}.admin-card-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}.admin-row{display:flex;justify-content:space-between;align-items:center;background:#f7faff;padding:14px;border-radius:14px}.admin-row div{display:grid;gap:5px}.admin-row span{font-size:11px;color:#75849a}.admin-row b{font-size:11px}.small-button{border:0;border-radius:10px;padding:9px 12px;background:#eaf2ff;color:#1769e0;font-weight:800}.badge{background:#eaf2ff;color:#1769e0;border-radius:20px;padding:5px 10px;font-size:11px;font-weight:800}.status-on{color:#16834b;font-weight:800}.setting-row,.setting-grid label,.login-card label{display:grid;gap:7px;font-size:12px;font-weight:700;color:#51647e;margin:12px 0}.setting-row input,.setting-grid input,.setting-grid select,.login-card input{border:1px solid #d8e2ef;border-radius:12px;padding:12px;font-size:13px;background:#fff}.setting-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.login-card{margin-top:80px}.login-card h1{margin-bottom:5px}.login-card .primary-button{border:0;width:100%;margin-top:8px;cursor:pointer}.text-link{display:block;text-align:center;margin-top:15px;color:#1769e0;font-size:12px;font-weight:700}
+
+.admin-actions{display:flex;gap:8px;margin-top:14px}.admin-actions button{border:0;border-radius:10px;padding:9px 12px;background:#eaf2ff;color:#1769e0;font-weight:800;font-size:11px}.admin-card>p{line-height:1.5}
+
+.fund-detail{grid-template-columns:70px 1fr;align-items:start}.fund-main{display:grid;gap:7px}.fund-main label{font-size:11px;font-weight:700;color:#51647e}.fund-main input{display:block;width:100%;margin-top:5px;border:1px solid #d8e2ef;border-radius:11px;padding:10px}.return-box{background:#f5f9ff;border-radius:12px;padding:10px;display:flex;justify-content:space-between;align-items:center;font-size:11px}.return-box strong{font-size:13px;color:#1769e0}.fund-detail>.primary-button{grid-column:2}
+
+html,body{min-height:100%;overflow-x:hidden}body{overflow-y:auto}.mobile-shell{min-height:100vh;overflow:visible}.scroll-page{padding-bottom:90px}.service-list{overflow:visible}
+textarea{min-height:100px;resize:vertical;border:1px solid #d8e2ef;border-radius:12px;padding:12px;font:inherit}
+
+.rank-schedule{display:grid;gap:12px}.rank-day-row{padding:12px;border-radius:14px;background:#f7faff}.rank-day-row>strong{display:block;margin-bottom:9px}.rank-day-row>div{display:flex;flex-wrap:wrap;gap:7px}.rank-day-row label{display:flex;align-items:center;gap:4px;background:#fff;border:1px solid #d8e2ef;border-radius:9px;padding:6px 8px;font-size:10px;color:#51647e}
+
+.rank-strip{display:flex;gap:10px;overflow-x:auto;overflow-y:hidden;padding:3px 2px 10px;scroll-snap-type:x proximity;-webkit-overflow-scrolling:touch}.rank-chip{min-width:110px;scroll-snap-align:start;border-radius:14px;padding:13px;background:#f5f9ff;border:1px solid #d8e2ef;display:grid;gap:5px}.rank-chip span{font-size:11px;color:#51647e}.rank-banner{min-height:90px;border-radius:18px;display:flex;align-items:center;justify-content:center;font-weight:900;letter-spacing:2px;margin-bottom:12px;background:#eef5ff}
+
+.rank-chip.rank-available{border-width:2px}.rank-chip .badge{font-size:9px;width:max-content}
+
+.cmc-mine{padding:0 0 90px}.mine-hero{padding:18px 22px 54px;background:linear-gradient(135deg,#1870d8,#2d8be5);color:#fff}.settings-button{display:inline-flex;width:40px;height:40px;align-items:center;justify-content:center;border-radius:50%;background:rgba(255,255,255,.15);color:#fff;text-decoration:none;font-size:22px}.mine-profile{display:flex;align-items:center;gap:14px;margin-top:28px}.mine-profile h1{margin:0;font-size:25px}.mine-profile p{margin:5px 0 0;opacity:.9}.mine-balance-card{margin:-30px 16px 14px;background:#fff;border-radius:20px;box-shadow:0 10px 30px rgba(25,74,130,.12);padding:18px}.mine-balance-columns{display:grid;grid-template-columns:1fr 1fr;gap:16px;text-align:center}.mine-balance-columns>div+div{border-left:1px solid #dce5f1}.mine-balance-columns span,.mine-stat-grid span{display:block;color:#66758b;font-size:11px}.mine-balance-columns strong{display:block;font-size:28px;margin:7px 0}.mine-balance-columns a{display:inline-block;padding:9px 18px;border-radius:9px;background:#1769d9;color:#fff;text-decoration:none;font-size:12px}.mine-balance-columns>div+div a{background:#f5a623}.mine-stat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px 7px;background:#f4f7fd;border-radius:10px;margin-top:18px;padding:13px 7px;text-align:center}.mine-stat-grid div:nth-last-child(-n+3){grid-column:span 2}.mine-stat-grid strong{display:block;margin-top:6px;font-size:13px}.rank-promo{margin:0 16px 14px;border-radius:14px;padding:16px;background:linear-gradient(135deg,#2b7de0,#5da7f2);color:#fff;display:grid;grid-template-columns:100px 1fr auto;gap:10px;align-items:center}.rank-promo strong{font-size:18px}.rank-promo span{font-size:13px}.rank-promo a{color:#fff;font-size:11px;text-decoration:underline}.mine-action-grid{margin:0 16px 14px;padding:18px 8px;display:grid;grid-template-columns:repeat(4,1fr);gap:12px;background:#fff;border-radius:18px}.mine-action{display:grid;justify-items:center;text-align:center;gap:8px;color:#263a57;text-decoration:none;font-size:11px}.mine-action-icon{width:54px;height:54px;border-radius:12px;background:#f3f6fb;display:grid;place-items:center;font-size:22px}.social-security-banner{display:block;margin:0 16px 14px;padding:28px 22px;border-radius:18px;background:linear-gradient(110deg,#0c2870,#1478dc);color:#fff;text-decoration:none}.social-security-banner span{display:block;font-size:13px}.social-security-banner strong{display:block;font-size:22px;color:#ffd36b;margin-top:5px}.mine-services{margin:0 16px;background:#fff;border-radius:18px;overflow:hidden}.mine-services .service-row{min-height:72px;padding:0 20px;border-bottom:1px solid #edf1f6}.mine-services .service-row:last-child{border-bottom:0}.mine-services .service-row span:first-child{font-family:Georgia,serif;font-size:16px}.home-money-actions{display:flex;justify-content:center;gap:10px;margin-top:12px}.home-money-actions a{padding:9px 20px;border-radius:9px;background:#1769d9;color:#fff;text-decoration:none;font-size:12px}.home-money-actions a:last-child{background:#f5a623}
+
+.commission-value{font-size:18px;font-weight:800}.service-row{display:flex;align-items:center;justify-content:space-between;gap:15px;padding:15px 0;border-bottom:1px solid #edf1f6}.service-row:last-child{border-bottom:0}
+
+.document-page{margin:0 16px;background:#fff;border-radius:18px;padding:22px;min-height:55vh;line-height:1.65}.brochure-blank{margin:0 16px;min-height:70vh;border-radius:18px;background:#f7f9fc;display:grid;place-items:center;color:#8a97a9;font-size:13px}
+
+.branch-strip{display:flex;overflow-x:auto;gap:14px;padding:3px 2px 12px;-webkit-overflow-scrolling:touch}.branch-card{min-width:280px;background:#fff;border-radius:18px;padding:15px;box-shadow:0 8px 24px rgba(20,60,110,.08)}.branch-image{height:150px;border-radius:14px;background:#eef4fb;display:grid;place-items:center;font-weight:900;font-size:26px;margin-bottom:12px}
+
+.return-box{display:flex;justify-content:space-between;align-items:center;padding:12px 14px;background:#f6f8fc;border-radius:10px;margin-top:8px}.return-box span{font-size:12px;color:#65758c}.return-box strong{font-size:14px}
+
+.rank-strip{display:flex;gap:14px;overflow-x:auto;padding:4px 2px 16px;-webkit-overflow-scrolling:touch;scroll-snap-type:x mandatory}.rank-card{min-width:292px;scroll-snap-align:start;background:#fff;border-radius:20px;overflow:hidden;box-shadow:0 10px 28px rgba(20,60,110,.1)}.rank-card-banner{min-height:150px;padding:22px;display:flex;flex-direction:column;justify-content:space-between;background:linear-gradient(135deg,#1b70d6,#57a5f1);color:#fff}.rank-card-banner span{font-size:13px;opacity:.9}.rank-card-banner strong{font-size:25px}.rank-card-body{padding:18px}.rank-card-body>div{display:flex;justify-content:space-between;padding:9px 0;border-bottom:1px solid #edf1f6}.rank-card-body span{font-size:12px;color:#65758c}.rank-card-body strong{font-size:14px}
+
+.referral-box{padding:15px;border:1px dashed #c8d5e6;border-radius:10px;background:#f8fafc;margin:12px 0;color:#718096;font-size:12px;word-break:break-all}
+
+.filter-strip{display:flex;gap:8px;overflow-x:auto;padding:2px 2px 12px}.filter-chip{border:1px solid #d8e0ea;background:#fff;border-radius:999px;padding:9px 13px;font-size:12px;white-space:nowrap}.filter-chip.active{font-weight:700}.transaction-list{display:flex;flex-direction:column;gap:8px}.stat-box{padding:13px;background:#f6f8fc;border-radius:12px}.stat-box span{display:block;font-size:11px;color:#718096}.stat-box strong{display:block;margin-top:5px}
+
+.profile-card{margin:0 16px 12px;padding:16px;background:#fff;border-radius:18px;display:flex;align-items:center;gap:12px;box-shadow:0 8px 24px rgba(20,60,110,.08)}.avatar{width:52px;height:52px;border-radius:50%;display:grid;place-items:center;background:#eef4fb;font-weight:800;font-size:12px}.mine-menu{margin:0 16px;background:#fff;border-radius:18px;overflow:hidden;box-shadow:0 8px 24px rgba(20,60,110,.08)}.menu-row{display:flex;align-items:center;justify-content:space-between;gap:15px;padding:15px;border-bottom:1px solid #edf1f5;text-decoration:none;color:inherit}.menu-row:last-child{border-bottom:0}.menu-row strong{display:block;font-size:14px}.menu-row small{display:block;color:#718096;margin-top:3px;font-size:11px}.toggle-row{display:flex;align-items:center;justify-content:space-between}
+
+/* Global Nexus Capital authentication screens */
+.auth-shell{min-height:100vh;background:linear-gradient(160deg,#f5f9ff 0%,#eaf2ff 52%,#f9fbff 100%);display:flex;justify-content:center;padding:28px 16px 40px}.auth-shell-scroll{overflow-y:auto}.auth-card{width:min(100%,440px);background:#fff;border-radius:28px;padding:24px 20px 26px;box-shadow:0 18px 45px rgba(22,65,120,.13);margin:auto}.auth-register-card{margin:10px auto}.cmc-auth-logo{display:block;width:180px;height:auto;max-height:118px;object-fit:contain;margin:0 auto 18px;border-radius:10px}.auth-heading{text-align:center;margin-bottom:20px}.auth-heading h1{margin:5px 0 6px;font-size:26px;letter-spacing:-.3px}.auth-form{display:grid;gap:14px}.auth-form label{display:grid;gap:7px;font-size:12px;font-weight:800;color:#51647e}.auth-form input{width:100%;border:1px solid #d8e2ef;border-radius:14px;padding:14px 13px;font-size:14px;background:#fff;color:#10203a;outline:none;transition:border-color .15s,box-shadow .15s}.auth-form input:focus{border-color:#2d7de1;box-shadow:0 0 0 3px rgba(45,125,225,.11)}.auth-primary,.auth-secondary{display:flex;align-items:center;justify-content:center;width:100%;min-height:48px;border-radius:14px;font-weight:800;font-size:14px;cursor:pointer}.auth-primary{border:0;background:linear-gradient(135deg,#1769e0,#2d8be5);color:#fff;box-shadow:0 9px 22px rgba(23,105,224,.2)}.auth-secondary{background:#edf4ff;color:#1769e0}.auth-button-link{margin-top:18px;text-decoration:none}.auth-divider{display:flex;align-items:center;gap:10px;margin:22px 0 14px;color:#8491a5;font-size:11px}.auth-divider:before,.auth-divider:after{content:"";height:1px;background:#e5ebf3;flex:1}.auth-security-note,.auth-test-note{margin:14px 0 0;padding:11px 12px;border-radius:12px;background:#f5f9ff;color:#687a92;font-size:11px;line-height:1.5}.auth-test-note{background:#fff8e8;color:#7a641f}.optional-label{font-weight:500;color:#8a98aa}.otp-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:7px}.otp-input{text-align:center;font-size:20px!important;font-weight:800;padding:13px 4px!important}.auth-error{margin:0;color:#b42318;font-size:12px;text-align:center}.otp-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:13px}.plain-action{border:0;background:transparent;color:#1769e0;font-size:11px;font-weight:800;padding:9px;cursor:pointer}.auth-success{text-align:center;padding:8px 0 6px}.success-icon{width:66px;height:66px;margin:8px auto 18px;border-radius:50%;display:grid;place-items:center;background:#e8f8ef;color:#16834b;font-size:32px;font-weight:900}.auth-success h1{font-size:27px;margin:6px 0}.auth-success .muted{line-height:1.5}@media(max-width:360px){.auth-card{padding:20px 15px}.otp-grid{gap:5px}.otp-input{font-size:18px!important}}
+.amount-choice{border:1px solid #d8e2ef;background:#fff;border-radius:14px;padding:14px 10px;font-weight:800;color:#1769e0;cursor:pointer}.amount-choice.selected{border:2px solid #1769e0;background:#edf4ff}.amount-choice:disabled{opacity:.5;cursor:not-allowed}.primary-button:disabled{opacity:.5;cursor:not-allowed}.qr-wrap{display:grid;justify-items:center;gap:7px;margin:16px 0}.qr-wrap img{width:220px;height:220px;border-radius:12px;background:#fff;padding:8px;box-shadow:0 5px 18px #dce6f5}.payment-details{display:grid;gap:12px;margin-top:12px}.payment-details>div{background:#f7faff;border-radius:14px;padding:13px}.payment-details span{display:block;color:#718096;font-size:11px}.payment-details strong{display:block;margin-top:5px;font-size:16px;word-break:break-word}.check-row{display:flex!important;align-items:center;gap:8px}.check-row input{width:auto!important}.admin-actions button{cursor:pointer}.feature-card{cursor:pointer}
+
+.rank-top-banner{margin:12px 0;padding:18px 20px;border-radius:18px;color:#fff;display:flex;flex-direction:column;gap:4px;transition:background .2s ease}.rank-top-banner span{font-size:11px;opacity:.8;letter-spacing:.12em}.rank-top-banner strong{font-size:20px}.rank-strip{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;gap:14px;padding:4px 2px 18px}.rank-card{min-width:88%;scroll-snap-align:start}
+.rank-top-banner{margin:12px 0;padding:18px 20px;border-radius:18px;color:#fff;display:flex;flex-direction:column;gap:4px;transition:background .2s ease}.rank-top-banner span{font-size:11px;opacity:.8;letter-spacing:.12em}.rank-top-banner strong{font-size:20px}.rank-arrow-row{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:8px 0}.rank-arrow-row button{border:0;border-radius:10px;padding:8px 14px;font-size:18px}.rank-strip{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;gap:14px;padding:4px 2px 18px;scroll-behavior:smooth}.rank-card{min-width:88%;scroll-snap-align:start}
+.logout-card{
+  margin-bottom:20px;
+}
+
+.logout-button{
+  width:100%;
+  border:0;
+  background:#fff;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  text-align:left;
+  padding:16px 2px;
+  cursor:pointer;
+  color:#b42318;
+  font-family:inherit;
+}
+
+.logout-button strong{
+  display:block;
+  font-size:14px;
+  color:#b42318;
+}
+
+.logout-button small{
+  display:block;
+  margin-top:4px;
+  font-size:11px;
+  color:#718096;
+}
+
+.logout-button>span:last-child{
+  font-size:22px;
+  color:#b42318;
+}
+
+.logout-overlay{
+  position:fixed;
+  inset:0;
+  z-index:9999;
+  background:rgba(15,27,45,.48);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:20px;
+}
+
+.logout-modal{
+  width:min(100%,360px);
+  background:#fff;
+  border-radius:24px;
+  padding:25px 20px 20px;
+  text-align:center;
+  box-shadow:0 20px 60px rgba(0,0,0,.2);
+}
+
+.logout-icon{
+  width:58px;
+  height:58px;
+  margin:0 auto 14px;
+  border-radius:50%;
+  display:grid;
+  place-items:center;
+  background:#fff0ef;
+  color:#b42318;
+  font-size:27px;
+  font-weight:900;
+}
+
+.logout-modal h2{
+  margin:0 0 8px;
+  font-size:20px;
+  color:#10203a;
+}
+
+.logout-modal p{
+  margin:0;
+  color:#718096;
+  font-size:13px;
+  line-height:1.5;
+}
+
+.logout-actions{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+  margin-top:20px;
+}
+
+.logout-actions button{
+  min-height:46px;
+  border-radius:13px;
+  font-family:inherit;
+  font-size:13px;
+  font-weight:800;
+  cursor:pointer;
+}
+
+.logout-cancel{
+  border:1px solid #d8e2ef;
+  background:#fff;
+  color:#51647e;
+}
+
+.logout-confirm{
+  border:0;
+  background:#b42318;
+  color:#fff;
+}
+
+.logout-actions button:disabled{
+  opacity:.55;
+  cursor:not-allowed;
+}
+
+.rank-finance-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}.rank-finance-grid>div{padding:10px 12px;border:1px solid rgba(0,0,0,.08);border-radius:12px;background:rgba(255,255,255,.72)}.rank-finance-grid span{display:block;font-size:12px;color:#6b7280;margin-bottom:4px}.rank-finance-grid strong{display:block;font-size:15px}.rank-card{min-width:100%;box-sizing:border-box}.rank-strip{scroll-snap-type:x mandatory}.rank-card{scroll-snap-align:start}
+
+
+/* =====================================================
+   Global Nexus Capital LUCKY CARDS - MYSTERY BOX SYSTEM
+===================================================== */
+
+.lucky-box-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+  margin: 18px 0;
+}
+
+.lucky-mystery-box {
+  position: relative;
+  min-height: 145px;
+  border: 0;
+  border-radius: 18px;
+  padding: 18px 12px;
+  cursor: pointer;
+  color: #fff;
+  background: linear-gradient(
+    135deg,
+    #7c3aed,
+    #4f46e5
+  );
+  box-shadow:
+    0 8px 20px rgba(79, 70, 229, 0.25);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  font-weight: 700;
+  font-size: 14px;
+  transition:
+    transform 0.25s ease,
+    box-shadow 0.25s ease;
+  overflow: hidden;
+}
+
+.lucky-mystery-box::before {
+  content: "";
+  position: absolute;
+  width: 180%;
+  height: 60%;
+  top: -45%;
+  left: -40%;
+  background: rgba(255, 255, 255, 0.16);
+  transform: rotate(-20deg);
+}
+
+.lucky-mystery-box:hover:not(:disabled) {
+  transform: translateY(-4px);
+  box-shadow:
+    0 14px 28px rgba(79, 70, 229, 0.35);
+}
+
+.lucky-mystery-box:active:not(:disabled) {
+  transform: scale(0.97);
+}
+
+.lucky-mystery-box:disabled {
+  cursor: default;
+}
+
+.lucky-box-icon {
+  position: relative;
+  z-index: 1;
+  font-size: 52px;
+  line-height: 1;
+}
+
+.lucky-mystery-box > span:last-child {
+  position: relative;
+  z-index: 1;
+}
+
+
+/* Mystery box animation */
+
+.lucky-mystery-box.is-shuffling {
+  animation:
+    luckyBoxShuffle 0.32s ease-in-out infinite;
+}
+
+@keyframes luckyBoxShuffle {
+
+  0% {
+    transform: translateX(0) rotate(0deg);
+  }
+
+  25% {
+    transform: translateX(-5px) rotate(-2deg);
+  }
+
+  50% {
+    transform: translateX(5px) rotate(2deg);
+  }
+
+  75% {
+    transform: translateX(-3px) rotate(-1deg);
+  }
+
+  100% {
+    transform: translateX(0) rotate(0deg);
+  }
+
+}
+
+
+/* Winning box */
+
+.lucky-mystery-box.is-winning {
+  animation:
+    luckyWinnerPulse 0.8s ease-in-out infinite;
+  box-shadow:
+    0 0 0 4px rgba(250, 204, 21, 0.35),
+    0 0 30px rgba(250, 204, 21, 0.8);
+}
+
+@keyframes luckyWinnerPulse {
+
+  0% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(1.06);
+  }
+
+  100% {
+    transform: scale(1);
+  }
+
+}
+
+
+/* Revealed prize */
+
+.lucky-mystery-box.is-revealed {
+  background:
+    linear-gradient(
+      135deg,
+      #f59e0b,
+      #facc15
+    );
+  color: #1f2937;
+  animation:
+    luckyReveal 0.7s ease-out;
+}
+
+@keyframes luckyReveal {
+
+  0% {
+    transform: scale(0.7) rotateY(90deg);
+    opacity: 0;
+  }
+
+  100% {
+    transform: scale(1) rotateY(0deg);
+    opacity: 1;
+  }
+
+}
+
+.lucky-prize-reveal {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 9px;
+  text-align: center;
+}
+
+.lucky-prize-reveal strong {
+  font-size: 16px;
+  word-break: break-word;
+}
+
+.lucky-reveal-icon {
+  font-size: 42px;
+}
+
+
+.lucky-result-card {
+  margin-top: 18px;
+  padding: 18px;
+  border-radius: 16px;
+  text-align: center;
+  background:
+    linear-gradient(
+      135deg,
+      rgba(250, 204, 21, 0.18),
+      rgba(245, 158, 11, 0.12)
+    );
+  border:
+    1px solid rgba(245, 158, 11, 0.35);
+}
+
+.lucky-result-card div {
+  margin-bottom: 8px;
+  font-weight: 700;
+}
+
+.lucky-result-card strong {
+  display: block;
+  font-size: 18px;
+}
+
+
+/* Mobile safety */
+
+@media (max-width: 380px) {
+
+  .lucky-box-grid {
+    gap: 10px;
+  }
+
+  .lucky-mystery-box {
+    min-height: 125px;
+    padding: 14px 8px;
+  }
+
+  .lucky-box-icon {
+    font-size: 44px;
+  }
+
+}
+
+
+/* Respect reduced-motion settings */
+
+@media (prefers-reduced-motion: reduce) {
+
+  .lucky-mystery-box,
+  .lucky-mystery-box.is-shuffling,
+  .lucky-mystery-box.is-winning,
+  .lucky-mystery-box.is-revealed {
+    animation: none !important;
+    transition: none !important;
+  }
+
+}
+
+
+
+/* =========================================
+   Global Nexus Capital POINTS SHOP
+   Unlimited two-column item grid
+========================================= */
+
+.points-shop-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  margin-top: 16px;
+}
+
+
+.points-shop-item {
+  width: 100%;
+  min-width: 0;
+
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 14px;
+
+  background: #ffffff;
+
+  padding: 10px;
+
+  display: flex;
+  flex-direction: column;
+
+  align-items: flex-start;
+
+  gap: 7px;
+
+  text-align: left;
+
+  cursor: pointer;
+
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+
+.points-shop-item:active {
+  transform: scale(0.97);
+}
+
+
+.points-shop-item strong {
+  width: 100%;
+
+  font-size: 14px;
+
+  overflow: hidden;
+
+  text-overflow: ellipsis;
+
+  white-space: nowrap;
+}
+
+
+.points-shop-item .muted {
+  width: 100%;
+
+  font-size: 11px;
+
+  line-height: 1.35;
+
+  display: -webkit-box;
+
+  -webkit-line-clamp: 2;
+
+  -webkit-box-orient: vertical;
+
+  overflow: hidden;
+}
+
+
+.points-shop-image {
+  width: 100%;
+
+  aspect-ratio: 1 / 1;
+
+  object-fit: cover;
+
+  border-radius: 10px;
+
+  display: block;
+}
+
+
+.points-shop-no-image {
+  width: 100%;
+
+  aspect-ratio: 1 / 1;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  font-size: 42px;
+
+  border-radius: 10px;
+
+  background: rgba(0, 0, 0, 0.04);
+}
+
+
+.points-shop-price {
+  margin-top: auto;
+
+  font-size: 12px;
+
+  font-weight: 700;
+
+  padding: 5px 8px;
+
+  border-radius: 999px;
+
+  background: rgba(0, 0, 0, 0.06);
+}
+
+
+
+/* =========================================
+   POINTS MODALS
+========================================= */
+
+.points-modal-backdrop {
+  position: fixed;
+
+  inset: 0;
+
+  z-index: 1000;
+
+  background: rgba(0, 0, 0, 0.55);
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  padding: 20px;
+}
+
+
+.points-modal {
+  width: min(100%, 420px);
+
+  background: #ffffff;
+
+  border-radius: 20px;
+
+  padding: 24px;
+
+  box-shadow:
+    0 20px 60px
+    rgba(0, 0, 0, 0.3);
+
+  animation:
+    pointsModalIn
+    0.25s ease;
+}
+
+
+.points-modal h2 {
+  margin-top: 0;
+}
+
+
+.points-modal-actions {
+  display: grid;
+
+  grid-template-columns: 1fr 1fr;
+
+  gap: 10px;
+
+  margin-top: 20px;
+}
+
+
+
+/* =========================================
+   CONGRATULATIONS SCREEN
+========================================= */
+
+.points-celebration {
+  position: fixed;
+
+  inset: 0;
+
+  z-index: 1100;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  padding: 20px;
+
+  background:
+    rgba(0, 0, 0, 0.6);
+
+  animation:
+    celebrationFade
+    0.3s ease;
+}
+
+
+.points-celebration-box {
+  width: min(100%, 430px);
+
+  background: #ffffff;
+
+  border-radius: 24px;
+
+  padding: 32px 24px;
+
+  text-align: center;
+
+  box-shadow:
+    0 20px 70px
+    rgba(0, 0, 0, 0.35);
+
+  animation:
+    celebrationPop
+    0.5s ease;
+}
+
+
+.points-celebration-box h1 {
+  margin-top: 15px;
+
+  font-size: 30px;
+}
+
+
+.points-celebration-box strong {
+  display: block;
+
+  margin-top: 10px;
+
+  font-size: 20px;
+}
+
+
+.points-confetti {
+  font-size: 28px;
+
+  animation:
+    confettiBounce
+    1s ease-in-out infinite;
+}
+
+
+
+/* =========================================
+   POINTS ANIMATIONS
+========================================= */
+
+@keyframes pointsModalIn {
+
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(0.96);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+
+}
+
+
+@keyframes celebrationFade {
+
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+
+}
+
+
+@keyframes celebrationPop {
+
+  0% {
+    transform: scale(0.5);
+    opacity: 0;
+  }
+
+  70% {
+    transform: scale(1.08);
+  }
+
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+
+}
+
+
+@keyframes confettiBounce {
+
+  0%,
+  100% {
+    transform: translateY(0) rotate(-2deg);
+  }
+
+  50% {
+    transform: translateY(-10px) rotate(2deg);
+  }
+
+}
+
+
+
+/* =========================================
+   GLOBAL NEXUS CAPITAL ADMIN POINTS SHOP DASHBOARD
+========================================= */
+
+.points-overview-grid {
+  display: grid;
+
+  grid-template-columns:
+    repeat(2, minmax(0, 1fr));
+
+  gap: 12px;
+
+  margin-top: 16px;
+}
+
+
+.points-overview-box {
+  border-radius: 14px;
+
+  padding: 16px;
+
+  background:
+    rgba(0, 0, 0, 0.04);
+
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 8px;
+}
+
+
+.points-overview-box span {
+  font-size: 12px;
+
+  opacity: 0.7;
+}
+
+
+.points-overview-box strong {
+  font-size: 24px;
+}
+
+
+.points-admin-list {
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 14px;
+}
+
+
+.points-admin-item {
+  display: flex;
+
+  gap: 12px;
+
+  padding: 12px;
+
+  border-radius: 14px;
+
+  background:
+    rgba(0, 0, 0, 0.03);
+
+  border:
+    1px solid
+    rgba(0, 0, 0, 0.06);
+}
+
+
+.points-admin-image {
+  width: 80px;
+
+  height: 80px;
+
+  flex-shrink: 0;
+
+  object-fit: cover;
+
+  border-radius: 12px;
+}
+
+
+.points-admin-content {
+  flex: 1;
+
+  min-width: 0;
+}
+
+
+.points-admin-actions {
+  display: flex;
+
+  flex-wrap: wrap;
+
+  gap: 8px;
+
+  margin-top: 12px;
+}
+
+
+.points-purchase-card {
+  margin-top: 14px;
+
+  padding: 16px;
+
+  border-radius: 14px;
+
+  border:
+    1px solid
+    rgba(0, 0, 0, 0.08);
+
+  background:
+    rgba(0, 0, 0, 0.025);
+}
+
+
+.points-purchase-card label {
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 6px;
+
+  margin-top: 12px;
+}
+
+
+.points-purchase-card select,
+.points-purchase-card textarea {
+  width: 100%;
+}
+
+
+@media (max-width: 360px) {
+
+  .points-overview-grid {
+
+    grid-template-columns: 1fr;
+
+  }
+
+
+  .points-admin-item {
+
+    flex-direction: column;
+
+  }
+
+
+  .points-admin-image {
+
+    width: 100%;
+
+    height: 150px;
+
+  }
+
+}
+
+
+/* =========================================
+   POINTS SHOP ADMIN IMAGE PREVIEW
+   Keep uploaded previews compact so admin
+   forms and edit modals do not become tall.
+========================================= */
+
+.points-admin-image-preview {
+  width: 140px;
+  height: 100px;
+  max-width: 100%;
+  object-fit: cover;
+  border-radius: 10px;
+  display: block;
+  margin-top: 10px;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+
+/* Keep Points Shop modals usable on smaller screens */
+
+.points-modal {
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+
+
+/* =========================================
+   ADMIN GIFT POINTS
+========================================= */
+
+.gift-users-list {
+  display: grid;
+  gap: 10px;
+  margin-top: 12px;
+  max-height: 280px;
+  overflow-y: auto;
+}
+
+.gift-user {
+  width: 100%;
+  border: 1px solid var(--border);
+  background: var(--card);
+  border-radius: 12px;
+  padding: 12px;
+  text-align: left;
+  display: grid;
+  gap: 5px;
+  cursor: pointer;
+}
+
+.gift-user.selected {
+  border-width: 2px;
+}
+
+.gift-selected-user {
+  display: grid;
+  gap: 5px;
+  padding: 12px;
+  border-radius: 12px;
+  background: var(--soft);
+  margin-top: 12px;
+}
+
+/* ========================================
+   Global Nexus Capital DEPOSIT WARNING
+======================================== */
+
+.deposit-warning{
+  display:flex;
+  gap:14px;
+  margin:18px 0;
+  padding:18px;
+  border-radius:20px;
+  background:linear-gradient(
+    135deg,
+    #fff7df,
+    #fffdf6
+  );
+  border:1px solid #f1d68a;
+  box-shadow:0 8px 24px rgba(183,137,29,.10);
+}
+
+.deposit-warning-icon{
+  flex:0 0 auto;
+  width:42px;
+  height:42px;
+  display:grid;
+  place-items:center;
+  border-radius:14px;
+  background:#fff0bc;
+  font-size:22px;
+}
+
+.deposit-warning strong{
+  display:block;
+  color:#8a5a00;
+  margin-bottom:8px;
+  font-size:15px;
+}
+
+.deposit-warning p{
+  margin:8px 0;
+  color:#755f35;
+  font-size:12px;
+  line-height:1.55;
+}
+
+
+/* ========================================
+   Global Nexus Capital PAYMENT VERIFICATION
+======================================== */
+
+.verification-page{
+  position:relative;
+  overflow:hidden;
+  background:
+    radial-gradient(
+      circle at 20% 20%,
+      rgba(56,132,255,.13),
+      transparent 35%
+    ),
+    radial-gradient(
+      circle at 80% 70%,
+      rgba(255,215,88,.12),
+      transparent 30%
+    );
+}
+
+.verification-page > *:not(.firefly){
+  position:relative;
+  z-index:2;
+}
+
+.verification-topbar{
+  margin-bottom:24px;
+}
+
+.verification-status-card{
+  text-align:center;
+  padding:28px 22px;
+  border-radius:28px;
+  margin-bottom:18px;
+  box-shadow:0 18px 40px rgba(23,105,224,.18);
+}
+
+.verification-pending{
+  color:#fff;
+  background:linear-gradient(
+    135deg,
+    #1769e0,
+    #4f9cff
+  );
+}
+
+.verification-success{
+  color:#fff;
+  background:linear-gradient(
+    135deg,
+    #11965a,
+    #39c77d
+  );
+}
+
+.verification-rejected{
+  color:#fff;
+  background:linear-gradient(
+    135deg,
+    #d94747,
+    #f07070
+  );
+}
+
+.verification-status-icon{
+  width:66px;
+  height:66px;
+  margin:0 auto 14px;
+  border-radius:50%;
+  display:grid;
+  place-items:center;
+  background:rgba(255,255,255,.18);
+  border:1px solid rgba(255,255,255,.30);
+  font-size:34px;
+  animation:verificationPulse 2.5s infinite;
+}
+
+.verification-status-card span{
+  display:block;
+  font-size:12px;
+  opacity:.85;
+}
+
+.verification-status-card strong{
+  display:block;
+  font-size:30px;
+  margin:7px 0;
+}
+
+.verification-status-card p{
+  margin:10px 0 0;
+  font-size:13px;
+  line-height:1.5;
+  opacity:.95;
+}
+
+@keyframes verificationPulse{
+  0%,100%{
+    transform:scale(1);
+  }
+
+  50%{
+    transform:scale(1.08);
+  }
+}
+
+.verification-order-card{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+  margin-bottom:18px;
+}
+
+.verification-order-card > div{
+  background:#fff;
+  padding:17px;
+  border-radius:18px;
+  box-shadow:0 8px 24px rgba(28,72,130,.10);
+}
+
+.verification-order-card span{
+  display:block;
+  font-size:11px;
+  color:#718096;
+  margin-bottom:6px;
+}
+
+.verification-order-card strong{
+  font-size:14px;
+  color:#19345c;
+}
+
+.verification-order-id{
+  word-break:break-all;
+}
+
+.waiting-card{
+  text-align:center;
+  background:rgba(255,255,255,.88);
+  backdrop-filter:blur(12px);
+  border-radius:24px;
+  padding:24px 20px;
+  margin-bottom:18px;
+  box-shadow:0 10px 30px rgba(27,72,125,.10);
+}
+
+.waiting-card strong{
+  display:block;
+  color:#19345c;
+  margin:12px 0 8px;
+}
+
+.waiting-card p{
+  margin:8px 0;
+  color:#718096;
+  font-size:12px;
+  line-height:1.55;
+}
+
+.waiting-dots{
+  display:flex;
+  justify-content:center;
+  gap:8px;
+}
+
+.waiting-dots span{
+  width:9px;
+  height:9px;
+  border-radius:50%;
+  background:#2f83eb;
+  animation:waitingBounce 1.4s infinite ease-in-out;
+}
+
+.waiting-dots span:nth-child(2){
+  animation-delay:.2s;
+}
+
+.waiting-dots span:nth-child(3){
+  animation-delay:.4s;
+}
+
+@keyframes waitingBounce{
+  0%,80%,100%{
+    transform:translateY(0);
+    opacity:.4;
+  }
+
+  40%{
+    transform:translateY(-8px);
+    opacity:1;
+  }
+}
+
+.verification-refresh-note{
+  text-align:center;
+  margin:0 0 12px;
+  color:#718096;
+  font-size:12px;
+  line-height:1.5;
+}
+
+.verification-complete-message{
+  padding:20px;
+  text-align:center;
+  border-radius:20px;
+  background:#ecfff4;
+  border:1px solid #a9e7c4;
+}
+
+.verification-complete-message strong{
+  display:block;
+  color:#13834d;
+  font-size:16px;
+}
+
+.verification-complete-message p{
+  margin:8px 0 0;
+  color:#4d7861;
+  font-size:13px;
+}
+
+.verification-rejection-message{
+  padding:20px;
+  text-align:center;
+  border-radius:20px;
+  background:#fff0f0;
+  border:1px solid #f0b7b7;
+}
+
+.verification-rejection-message strong{
+  display:block;
+  color:#bd3838;
+}
+
+.verification-rejection-message p{
+  margin:8px 0 0;
+  color:#7f5a5a;
+  font-size:13px;
+}
+
+
+/* ========================================
+   SLOW MOVING Global Nexus Capital FIREFLIES
+======================================== */
+
+.firefly{
+  position:absolute;
+  width:7px;
+  height:7px;
+  border-radius:50%;
+  background:#fff5a5;
+  box-shadow:
+    0 0 8px #ffe96b,
+    0 0 18px #ffd84d,
+    0 0 30px rgba(255,216,77,.7);
+  z-index:1;
+  pointer-events:none;
+  animation:fireflyGlow 2.5s infinite alternate;
+}
+
+@keyframes fireflyGlow{
+  from{
+    opacity:.25;
+    transform:scale(.7);
+  }
+
+  to{
+    opacity:1;
+    transform:scale(1.25);
+  }
+}
+
+.firefly-1{
+  top:12%;
+  left:8%;
+  animation:
+    flyOne 12s infinite ease-in-out,
+    fireflyGlow 2.5s infinite alternate;
+}
+
+.firefly-2{
+  top:24%;
+  right:9%;
+  animation:
+    flyTwo 15s infinite ease-in-out,
+    fireflyGlow 3s infinite alternate;
+}
+
+.firefly-3{
+  top:43%;
+  left:5%;
+  animation:
+    flyThree 14s infinite ease-in-out,
+    fireflyGlow 2.2s infinite alternate;
+}
+
+.firefly-4{
+  top:58%;
+  right:6%;
+  animation:
+    flyOne 17s infinite ease-in-out reverse,
+    fireflyGlow 3.4s infinite alternate;
+}
+
+.firefly-5{
+  top:72%;
+  left:16%;
+  animation:
+    flyTwo 13s infinite ease-in-out reverse,
+    fireflyGlow 2.7s infinite alternate;
+}
+
+.firefly-6{
+  top:84%;
+  right:18%;
+  animation:
+    flyThree 16s infinite ease-in-out,
+    fireflyGlow 3.2s infinite alternate;
+}
+
+.firefly-7{
+  top:35%;
+  left:82%;
+  animation:
+    flyTwo 18s infinite ease-in-out,
+    fireflyGlow 2.8s infinite alternate;
+}
+
+.firefly-8{
+  top:66%;
+  left:72%;
+  animation:
+    flyOne 11s infinite ease-in-out,
+    fireflyGlow 2.4s infinite alternate;
+}
+
+@keyframes flyOne{
+  0%,100%{
+    margin-left:0;
+    margin-top:0;
+  }
+
+  25%{
+    margin-left:25px;
+    margin-top:-18px;
+  }
+
+  50%{
+    margin-left:45px;
+    margin-top:12px;
+  }
+
+  75%{
+    margin-left:12px;
+    margin-top:28px;
+  }
+}
+
+@keyframes flyTwo{
+  0%,100%{
+    margin-left:0;
+    margin-top:0;
+  }
+
+  30%{
+    margin-left:-28px;
+    margin-top:20px;
+  }
+
+  60%{
+    margin-left:18px;
+    margin-top:42px;
+  }
+
+  85%{
+    margin-left:38px;
+    margin-top:10px;
+  }
+}
+
+@keyframes flyThree{
+  0%,100%{
+    margin-left:0;
+    margin-top:0;
+  }
+
+  20%{
+    margin-left:18px;
+    margin-top:30px;
+  }
+
+  50%{
+    margin-left:-20px;
+    margin-top:52px;
+  }
+
+  75%{
+    margin-left:-38px;
+    margin-top:18px;
+  }
+}
+
+@media(max-width:420px){
+  .verification-order-card{
+    grid-template-columns:1fr;
+  }
+
+  .deposit-warning{
+    padding:15px;
+  }
+}
+
+/* =========================================
+   Global Nexus Capital DEPOSIT VERIFICATION BACKGROUND
+   Dark background makes fireflies glow clearly
+========================================= */
+
+.deposit-verification-page{
+  position:relative;
+  min-height:100vh;
+  isolation:isolate;
+  background:
+    radial-gradient(
+      circle at 15% 20%,
+      rgba(37,99,235,.20),
+      transparent 35%
+    ),
+    radial-gradient(
+      circle at 85% 70%,
+      rgba(124,58,237,.18),
+      transparent 40%
+    ),
+    linear-gradient(
+      135deg,
+      #071426 0%,
+      #0b1f3a 45%,
+      #111827 100%
+    );
+}
+
+/* Keep the content above the glowing fireflies */
+.deposit-verification-page > *{
+  position:relative;
+  z-index:2;
+}
+
+/* Header text stays clearly visible */
+.deposit-verification-page .topbar h1{
+  color:#ffffff;
+}
+
+.deposit-verification-page .eyebrow{
+  color:#93c5fd;
+}
+
+.deposit-verification-page .topbar .muted{
+  color:#cbd5e1;
+}
+
+/* Make existing white cards remain bright and clean */
+.deposit-verification-page .admin-card{
+  background:rgba(255,255,255,.97);
+}
+
+/* Extra subtle glow behind the page */
+.deposit-verification-page::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+  z-index:0;
+  background:
+    radial-gradient(
+      circle at 20% 40%,
+      rgba(250,204,21,.08),
+      transparent 25%
+    ),
+    radial-gradient(
+      circle at 80% 25%,
+      rgba(96,165,250,.10),
+      transparent 30%
+    );
+}
+
+/* =========================================
+   STRONGER FIREFLY CONTRAST
+   Deposit Verification Page Only
+========================================= */
+
+.deposit-verification-page{
+  background:
+    radial-gradient(
+      circle at 12% 15%,
+      rgba(30,64,175,.28),
+      transparent 30%
+    ),
+    radial-gradient(
+      circle at 88% 82%,
+      rgba(91,33,182,.22),
+      transparent 35%
+    ),
+    linear-gradient(
+      135deg,
+      #020617 0%,
+      #081225 45%,
+      #0f172a 100%
+    );
+}
+
+/* Make the glowing fireflies much more visible */
+.deposit-verification-page .firefly{
+  background:#fde047;
+  box-shadow:
+    0 0 8px rgba(254,240,138,.95),
+    0 0 18px rgba(250,204,21,.85),
+    0 0 35px rgba(245,158,11,.65);
+  opacity:1;
+}
+
+/* Stronger glowing animation */
+.deposit-verification-page .firefly{
+  animation:
+    fireflyGlow 2.5s infinite alternate,
+    fireflyFloat 7s ease-in-out infinite;
+}
+
+@keyframes fireflyFloat{
+  0%,100%{
+    transform:translate(0,0);
+  }
+
+  25%{
+    transform:translate(18px,-25px);
+  }
+
+  50%{
+    transform:translate(-12px,-45px);
+  }
+
+  75%{
+    transform:translate(-25px,-18px);
+  }
+}
+
+
+
+/* ========================================
+   Global Nexus Capital PAYMENT VERIFICATION – FIREFLY THEME
+======================================== */
+
+.verification-page{
+  position:relative;
+  min-height:100vh;
+  overflow:hidden;
+  isolation:isolate;
+
+  background:
+    radial-gradient(
+      circle at 15% 20%,
+      rgba(30,64,175,.35),
+      transparent 35%
+    ),
+    radial-gradient(
+      circle at 85% 75%,
+      rgba(88,28,135,.28),
+      transparent 40%
+    ),
+    linear-gradient(
+      135deg,
+      #08111f 0%,
+      #10233f 50%,
+      #081525 100%
+    );
+}
+
+
+/* Keep all normal content above the fireflies */
+.verification-page > *:not(.firefly){
+  position:relative;
+  z-index:3;
+}
+
+
+/* Make fireflies brighter and more visible */
+.verification-page .firefly{
+  z-index:2;
+
+  width:9px;
+  height:9px;
+
+  background:#fff7a8;
+
+  box-shadow:
+    0 0 10px #fff7a8,
+    0 0 22px #ffe96b,
+    0 0 40px rgba(255,216,77,.95),
+    0 0 70px rgba(255,216,77,.55);
+}
+
+
+/* Header text for the dark background */
+.verification-page .topbar h1{
+  color:#ffffff;
+}
+
+.verification-page .eyebrow{
+  color:#9ecbff;
+}
+
+.verification-page .topbar .muted{
+  color:#cbd5e1;
+}
+
+
+/* Decorative glow across the background */
+.verification-page::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  z-index:1;
+  pointer-events:none;
+
+  background:
+    radial-gradient(
+      circle at 10% 55%,
+      rgba(250,204,21,.10),
+      transparent 18%
+    ),
+    radial-gradient(
+      circle at 90% 30%,
+      rgba(96,165,250,.12),
+      transparent 25%
+    );
+}
+
+
+
+/* ========================================
+   GLOBAL NEXUS CAPITAL ADMIN DASHBOARD - COMPACT INTERFACE
+======================================== */
+
+.admin-dashboard{
+  padding-bottom:35px;
+}
+
+/* Header */
+
+.admin-dashboard-header{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:15px;
+  margin-bottom:20px;
+}
+
+.admin-dashboard-title h1{
+  margin:4px 0 4px;
+  font-size:27px;
+  line-height:1.1;
+  color:#183153;
+}
+
+.admin-dashboard-title p{
+  margin:0;
+  font-size:12px;
+  color:#7b8ba3;
+}
+
+.admin-dashboard-actions{
+  display:flex;
+  gap:7px;
+  flex-shrink:0;
+}
+
+.admin-header-button{
+  border:none;
+  text-decoration:none;
+  background:#edf3fa;
+  color:#365274;
+  border-radius:10px;
+  padding:9px 11px;
+  font-size:11px;
+  font-weight:700;
+  cursor:pointer;
+  line-height:1;
+}
+
+.admin-logout-button{
+  background:#fff1f1;
+  color:#c34b4b;
+}
+
+
+/* Pending card */
+
+.admin-pending-card{
+  background:
+    linear-gradient(
+      135deg,
+      #163b68,
+      #2466aa
+    );
+  border-radius:20px;
+  padding:18px;
+  color:#fff;
+  margin-bottom:24px;
+  box-shadow:0 12px 30px rgba(25,75,135,.18);
+}
+
+.admin-pending-main{
+  display:flex;
+  align-items:baseline;
+  gap:8px;
+  margin-bottom:16px;
+}
+
+.admin-pending-label{
+  display:none;
+}
+
+.admin-pending-main strong{
+  font-size:30px;
+  line-height:1;
+}
+
+.admin-pending-text{
+  font-size:12px;
+  opacity:.8;
+}
+
+.admin-pending-links{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:9px;
+}
+
+.admin-pending-links a{
+  text-decoration:none;
+  color:#fff;
+  background:rgba(255,255,255,.12);
+  border:1px solid rgba(255,255,255,.10);
+  border-radius:13px;
+  padding:11px 13px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+
+.admin-pending-links span{
+  font-size:11px;
+  opacity:.85;
+}
+
+.admin-pending-links strong{
+  font-size:18px;
+}
+
+
+/* Modules */
+
+.admin-modules-section{
+  margin-top:5px;
+}
+
+.admin-modules-heading{
+  display:flex;
+  align-items:flex-end;
+  justify-content:space-between;
+  margin-bottom:13px;
+}
+
+.admin-modules-heading > div > span{
+  display:block;
+  font-size:9px;
+  font-weight:800;
+  letter-spacing:1px;
+  color:#7390b4;
+  margin-bottom:3px;
+}
+
+.admin-modules-heading h2{
+  margin:0;
+  font-size:19px;
+  color:#1d3557;
+}
+
+.admin-modules-heading small{
+  font-size:10px;
+  color:#8a99ad;
+}
+
+
+/* Compact module grid */
+
+.admin-modules-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:9px;
+}
+
+.admin-module-card{
+  min-height:68px;
+  background:#fff;
+  border:1px solid #edf1f6;
+  border-radius:15px;
+  padding:10px;
+  display:flex;
+  align-items:center;
+  gap:9px;
+  text-decoration:none;
+  box-shadow:0 5px 16px rgba(32,65,105,.05);
+  transition:
+    transform .2s ease,
+    box-shadow .2s ease;
+}
+
+.admin-module-card:active{
+  transform:scale(.97);
+}
+
+.admin-module-icon{
+  width:34px;
+  height:34px;
+  flex-shrink:0;
+  display:grid;
+  place-items:center;
+  border-radius:11px;
+  background:#edf5ff;
+  color:#2e75bb;
+  font-size:16px;
+}
+
+.admin-module-name{
+  flex:1;
+  color:#29425f;
+  font-size:11px;
+  line-height:1.3;
+  font-weight:700;
+}
+
+.admin-module-arrow{
+  color:#a8b5c4;
+  font-size:20px;
+  line-height:1;
+}
+
+
+/* Smaller phones */
+
+@media(max-width:360px){
+
+  .admin-modules-grid{
+    grid-template-columns:1fr;
+  }
+
+}
+
+
+/* Larger screens */
+
+@media(min-width:700px){
+
+  .admin-modules-grid{
+    grid-template-columns:
+      repeat(3,1fr);
+  }
+
+}
+
+
+/* =========================================
+   CLEAN ADMIN USERS INTERFACE
+========================================= */
+
+.admin-card .list-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+
+  padding: 13px 0;
+
+  border-bottom: 1px solid #edf1f6;
+}
+
+.admin-card .list-row:last-of-type {
+  border-bottom: 0;
+}
+
+.admin-card .list-row > div {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.admin-card .list-row strong {
+  font-size: 13px;
+  color: #263a57;
+}
+
+.admin-card .list-row .muted {
+  font-size: 13px;
+  color: #75849a;
+}
+
+
+/* =========================================
+   USER BALANCE BOX
+========================================= */
+
+.admin-card .mine-stat-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+
+  margin-top: 16px;
+  margin-bottom: 6px;
+
+  padding: 16px;
+
+  background: #f7f9fc;
+
+  border: 1px solid #edf1f6;
+
+  border-radius: 16px;
+
+  gap: 12px;
+}
+
+.admin-card .mine-stat-grid div {
+  padding: 4px;
+}
+
+.admin-card .mine-stat-grid strong {
+  font-size: 17px;
+  color: #263a57;
+}
+
+
+/* =========================================
+   ADMIN FORM SECTIONS
+========================================= */
+
+.admin-card .form-section {
+  margin-top: 20px;
+
+  padding-top: 18px;
+
+  border-top: 1px solid #edf1f6;
+}
+
+.admin-card .section-heading {
+  display: flex;
+
+  align-items: flex-start;
+
+  justify-content: space-between;
+
+  gap: 14px;
+
+  margin-bottom: 16px;
+}
+
+.admin-card .section-heading strong {
+  font-size: 15px;
+
+  color: #263a57;
+}
+
+.admin-card .section-heading .muted {
+  font-size: 12px;
+
+  line-height: 1.4;
+
+  text-align: right;
+
+  color: #75849a;
+}
+
+
+/* =========================================
+   CLEAN CASH GIFT FORM
+========================================= */
+
+.admin-card .form-section > label {
+  display: block;
+
+  margin-top: 14px;
+
+  margin-bottom: 7px;
+
+  font-size: 12px;
+
+  font-weight: 700;
+
+  color: #51647e;
+}
+
+.admin-card .form-section > input {
+  display: block;
+
+  width: 100%;
+
+  box-sizing: border-box;
+
+  min-height: 46px;
+
+  padding: 12px 14px;
+
+  border: 1px solid #d8e2ef;
+
+  border-radius: 12px;
+
+  background: #ffffff;
+
+  color: #263a57;
+
+  font-size: 14px;
+
+  outline: none;
+
+  transition: border-color .2s ease,
+              box-shadow .2s ease;
+}
+
+.admin-card .form-section > input:focus {
+  border-color: #1769e0;
+
+  box-shadow:
+    0 0 0 3px rgba(23,105,224,.10);
+}
+
+.admin-card .form-section > input::placeholder {
+  color: #9aa8b8;
+}
+
+
+/* CASH GIFT BUTTON */
+
+.admin-card .form-section > .primary-button {
+  width: 100%;
+
+  min-height: 46px;
+
+  margin-top: 16px;
+
+  border: 0;
+
+  border-radius: 12px;
+
+  cursor: pointer;
+
+  font-size: 13px;
+
+  font-weight: 800;
+
+  background: #1769e0;
+
+  color: #ffffff;
+
+  transition:
+    transform .15s ease,
+    opacity .15s ease;
+}
+
+.admin-card .form-section > .primary-button:hover {
+  opacity: .92;
+}
+
+.admin-card .form-section > .primary-button:active {
+  transform: scale(.99);
+}
+
+.admin-card .form-section > button:disabled {
+  opacity: .6;
+
+  cursor: not-allowed;
+}
+
+
+/* =========================================
+   ACCOUNT CONTROLS
+========================================= */
+
+.admin-card .setting-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+
+  gap: 12px;
+}
+
+.admin-card .setting-grid button {
+  width: 100%;
+
+  min-height: 44px;
+
+  border-radius: 12px;
+
+  font-size: 13px;
+
+  font-weight: 800;
+}
+
+
+/* =========================================
+   MOBILE ADMIN USERS
+========================================= */
+
+@media (max-width: 600px) {
+
+  .admin-card {
+    padding: 16px;
+  }
+
+  .admin-card .section-heading {
+    flex-direction: column;
+
+    gap: 5px;
+  }
+
+  .admin-card .section-heading .muted {
+    text-align: left;
+  }
+
+  .admin-card .mine-stat-grid {
+    padding: 12px;
+  }
+
+  .admin-card .mine-stat-grid strong {
+    font-size: 15px;
+  }
+
+  .admin-card .setting-grid {
+    grid-template-columns: 1fr;
+  }
+
+}
+
+/* =========================================
+   Global Nexus Capital PREMIUM LOGIN PAGE REDESIGN
+========================================= */
+
+.auth-shell{
+  position:relative;
+  isolation:isolate;
+  min-height:100vh;
+  overflow:hidden;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:32px 16px;
+  background:
+    radial-gradient(circle at 15% 15%, rgba(45,125,225,.18), transparent 32%),
+    radial-gradient(circle at 85% 85%, rgba(88,166,255,.16), transparent 30%),
+    linear-gradient(145deg,#eef5ff 0%,#f8fbff 48%,#eaf3ff 100%);
+}
+
+/* Animated background circles */
+
+.auth-shell::before,
+.auth-shell::after{
+  content:"";
+  position:absolute;
+  border-radius:50%;
+  pointer-events:none;
+  z-index:-1;
+  filter:blur(4px);
+}
+
+.auth-shell::before{
+  width:300px;
+  height:300px;
+  background:rgba(45,125,225,.15);
+  top:-120px;
+  left:-100px;
+  animation:authBackgroundFloat 10s ease-in-out infinite;
+}
+
+.auth-shell::after{
+  width:260px;
+  height:260px;
+  background:rgba(88,166,255,.14);
+  bottom:-120px;
+  right:-100px;
+  animation:authBackgroundFloat 13s ease-in-out infinite reverse;
+}
+
+/* Main login card */
+
+.auth-card{
+  position:relative;
+  width:min(100%,420px);
+  margin:0 auto;
+  padding:32px 26px 28px;
+
+  background:rgba(255,255,255,.92);
+
+  border:1px solid rgba(255,255,255,.9);
+
+  border-radius:30px;
+
+  box-shadow:
+    0 25px 70px rgba(25,75,135,.16),
+    0 8px 25px rgba(25,75,135,.08);
+
+  backdrop-filter:blur(18px);
+
+  animation:authCardEnter .7s cubic-bezier(.2,.8,.2,1);
+}
+
+/* Logo */
+
+.cmc-auth-logo{
+  display:block;
+
+  width:360px;
+  height:203px;
+  max-height:none;
+
+  object-fit:contain;
+
+  margin:0 auto 12px;
+
+  border-radius:18px;
+
+  animation:authLogoFloat 5s ease-in-out infinite;
+
+  filter:drop-shadow(0 8px 12px rgba(25,90,170,.12));
+}
+
+/* Heading */
+
+.auth-heading{
+  text-align:center;
+  margin-bottom:26px;
+
+  animation:authFadeUp .7s ease both .12s;
+}
+
+.auth-heading .eyebrow{
+  display:inline-block;
+
+  margin-bottom:6px;
+
+  color:#2d7de1;
+
+  font-size:11px;
+  font-weight:900;
+
+  letter-spacing:.22em;
+}
+
+.auth-heading h1{
+  margin:0 0 8px;
+
+  font-size:30px;
+  line-height:1.1;
+
+  font-weight:900;
+
+  color:#16253a;
+
+  letter-spacing:-.7px;
+}
+
+.auth-heading .muted{
+  margin:0;
+
+  color:#718096;
+
+  font-size:14px;
+}
+
+/* Form */
+
+.auth-form{
+  display:grid;
+  gap:17px;
+
+  animation:authFadeUp .7s ease both .22s;
+}
+
+.auth-form label{
+  display:grid;
+  gap:8px;
+
+  color:#42546b;
+
+  font-size:12px;
+
+  font-weight:800;
+}
+
+/* Inputs */
+
+.auth-form input{
+  width:100%;
+
+  min-height:54px;
+
+  padding:0 16px;
+
+  border:1.5px solid #dce6f1;
+
+  border-radius:16px;
+
+  background:#fbfdff;
+
+  color:#16253a;
+
+  font-size:15px;
+
+  outline:none;
+
+  transition:
+    border-color .2s ease,
+    box-shadow .2s ease,
+    transform .2s ease,
+    background .2s ease;
+
+  box-sizing:border-box;
+}
+
+.auth-form input::placeholder{
+  color:#a1adbb;
+}
+
+.auth-form input:focus{
+  background:#fff;
+
+  border-color:#2d7de1;
+
+  box-shadow:0 0 0 4px rgba(45,125,225,.12);
+
+  transform:translateY(-1px);
+}
+
+/* Password input */
+
+.password-input-wrap{
+  position:relative;
+  width:100%;
+}
+
+.password-input-wrap input{
+  padding-right:56px;
+}
+
+/* Password eye button */
+
+.password-toggle{
+  position:absolute;
+
+  top:50%;
+  right:8px;
+
+  transform:translateY(-50%);
+
+  width:42px;
+  height:42px;
+
+  border:0;
+
+  border-radius:12px;
+
+  background:transparent;
+
+  cursor:pointer;
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
+
+  font-size:17px;
+
+  transition:
+    background .2s ease,
+    transform .2s ease;
+}
+
+.password-toggle:hover{
+  background:#eef5ff;
+}
+
+.password-toggle:active{
+  transform:translateY(-50%) scale(.92);
+}
+
+/* Login button */
+
+.auth-primary{
+  width:100%;
+
+  min-height:55px;
+
+  margin-top:4px;
+
+  border:0;
+
+  border-radius:16px;
+
+  background:linear-gradient(
+    135deg,
+    #1769e0 0%,
+    #2d8be5 100%
+  );
+
+  color:#fff;
+
+  font-size:15px;
+  font-weight:900;
+
+  letter-spacing:.1px;
+
+  cursor:pointer;
+
+  box-shadow:
+    0 12px 28px rgba(23,105,224,.25);
+
+  transition:
+    transform .2s ease,
+    box-shadow .2s ease;
+
+  animation:authButtonGlow 3s ease-in-out infinite;
+}
+
+.auth-primary:hover{
+  transform:translateY(-2px);
+
+  box-shadow:
+    0 17px 35px rgba(23,105,224,.34);
+}
+
+.auth-primary:active{
+  transform:scale(.98);
+}
+
+.auth-primary:disabled{
+  opacity:.7;
+  cursor:not-allowed;
+  transform:none;
+}
+
+/* Links */
+
+.text-link{
+  display:block;
+
+  width:max-content;
+
+  margin:20px auto 0;
+
+  color:#2476d8;
+
+  text-decoration:none;
+
+  font-size:13px;
+  font-weight:800;
+
+  transition:transform .2s ease;
+}
+
+.text-link:hover{
+  transform:translateY(-1px);
+}
+
+/* Divider */
+
+.auth-divider{
+  display:flex;
+  align-items:center;
+  gap:12px;
+
+  margin:25px 0 16px;
+
+  color:#8b98a8;
+
+  font-size:12px;
+}
+
+.auth-divider::before,
+.auth-divider::after{
+  content:"";
+
+  height:1px;
+
+  flex:1;
+
+  background:#e6edf5;
+}
+
+/* Create account button */
+
+.auth-secondary{
+  width:100%;
+
+  min-height:52px;
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
+
+  border-radius:16px;
+
+  background:#f0f6ff;
+
+  border:1px solid #dce9fa;
+
+  color:#1769e0;
+
+  text-decoration:none;
+
+  font-size:14px;
+  font-weight:900;
+
+  transition:
+    transform .2s ease,
+    background .2s ease,
+    box-shadow .2s ease;
+}
+
+.auth-secondary:hover{
+  transform:translateY(-2px);
+
+  background:#e8f2ff;
+
+  box-shadow:0 8px 20px rgba(35,100,180,.1);
+}
+
+/* Error */
+
+.auth-error{
+  margin:0;
+
+  padding:11px 13px;
+
+  border-radius:12px;
+
+  background:#fff1f1;
+
+  color:#c53030;
+
+  font-size:12px;
+
+  text-align:center;
+}
+
+/* Animations */
+
+@keyframes authCardEnter{
+
+  from{
+    opacity:0;
+    transform:
+      translateY(35px)
+      scale(.96);
+  }
+
+  to{
+    opacity:1;
+    transform:
+      translateY(0)
+      scale(1);
+  }
+
+}
+
+@keyframes authLogoFloat{
+
+  0%,
+  100%{
+    transform:translateY(0);
+  }
+
+  50%{
+    transform:translateY(-7px);
+  }
+
+}
+
+@keyframes authFadeUp{
+
+  from{
+    opacity:0;
+    transform:translateY(20px);
+  }
+
+  to{
+    opacity:1;
+    transform:translateY(0);
+  }
+
+}
+
+@keyframes authButtonGlow{
+
+  0%,
+  100%{
+    box-shadow:
+      0 12px 28px rgba(23,105,224,.23);
+  }
+
+  50%{
+    box-shadow:
+      0 16px 35px rgba(45,139,229,.40);
+  }
+
+}
+
+@keyframes authBackgroundFloat{
+
+  0%,
+  100%{
+    transform:
+      translate3d(0,0,0)
+      scale(1);
+  }
+
+  50%{
+    transform:
+      translate3d(30px,25px,0)
+      scale(1.12);
+  }
+
+}
+
+/* Mobile */
+
+@media(max-width:480px){
+
+  .auth-shell{
+    padding:20px 14px;
+  }
+
+  .auth-card{
+    padding:28px 20px 24px;
+    border-radius:25px;
+  }
+
+  .auth-heading h1{
+    font-size:27px;
+  }
+
+}
+
+/* Accessibility */
+
+@media(prefers-reduced-motion:reduce){
+
+  .auth-card,
+  .cmc-auth-logo,
+  .auth-heading,
+  .auth-form,
+  .auth-primary,
+  .auth-shell::before,
+  .auth-shell::after{
+    animation:none !important;
+  }
+
+}
+
+
+/* =========================================
+   Global Nexus Capital PREMIUM LOGIN PAGE REDESIGN
+========================================= */
+
+.auth-shell{
+  position:relative;
+  isolation:isolate;
+  min-height:100vh;
+  overflow:hidden;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:32px 16px;
+  background:
+    radial-gradient(circle at 15% 15%, rgba(45,125,225,.18), transparent 32%),
+    radial-gradient(circle at 85% 85%, rgba(88,166,255,.16), transparent 30%),
+    linear-gradient(145deg,#eef5ff 0%,#f8fbff 48%,#eaf3ff 100%);
+}
+
+/* Animated background circles */
+
+.auth-shell::before,
+.auth-shell::after{
+  content:"";
+  position:absolute;
+  border-radius:50%;
+  pointer-events:none;
+  z-index:-1;
+  filter:blur(4px);
+}
+
+.auth-shell::before{
+  width:300px;
+  height:300px;
+  background:rgba(45,125,225,.15);
+  top:-120px;
+  left:-100px;
+  animation:authBackgroundFloat 10s ease-in-out infinite;
+}
+
+.auth-shell::after{
+  width:260px;
+  height:260px;
+  background:rgba(88,166,255,.14);
+  bottom:-120px;
+  right:-100px;
+  animation:authBackgroundFloat 13s ease-in-out infinite reverse;
+}
+
+/* Main login card */
+
+.auth-card{
+  position:relative;
+  width:min(100%,420px);
+  margin:0 auto;
+  padding:32px 26px 28px;
+
+  background:rgba(255,255,255,.92);
+
+  border:1px solid rgba(255,255,255,.9);
+
+  border-radius:30px;
+
+  box-shadow:
+    0 25px 70px rgba(25,75,135,.16),
+    0 8px 25px rgba(25,75,135,.08);
+
+  backdrop-filter:blur(18px);
+
+  animation:authCardEnter .7s cubic-bezier(.2,.8,.2,1);
+}
+
+/* Logo */
+
+.cmc-auth-logo{
+  display:block;
+
+  width:360px;
+  height:203px;
+  max-height:none;
+
+  object-fit:contain;
+
+  margin:0 auto 12px;
+
+  border-radius:18px;
+
+  animation:authLogoFloat 5s ease-in-out infinite;
+
+  filter:drop-shadow(0 8px 12px rgba(25,90,170,.12));
+}
+
+/* Heading */
+
+.auth-heading{
+  text-align:center;
+  margin-bottom:26px;
+
+  animation:authFadeUp .7s ease both .12s;
+}
+
+.auth-heading .eyebrow{
+  display:inline-block;
+
+  margin-bottom:6px;
+
+  color:#2d7de1;
+
+  font-size:11px;
+  font-weight:900;
+
+  letter-spacing:.22em;
+}
+
+.auth-heading h1{
+  margin:0 0 8px;
+
+  font-size:30px;
+  line-height:1.1;
+
+  font-weight:900;
+
+  color:#16253a;
+
+  letter-spacing:-.7px;
+}
+
+.auth-heading .muted{
+  margin:0;
+
+  color:#718096;
+
+  font-size:14px;
+}
+
+/* Form */
+
+.auth-form{
+  display:grid;
+  gap:17px;
+
+  animation:authFadeUp .7s ease both .22s;
+}
+
+.auth-form label{
+  display:grid;
+  gap:8px;
+
+  color:#42546b;
+
+  font-size:12px;
+
+  font-weight:800;
+}
+
+/* Inputs */
+
+.auth-form input{
+  width:100%;
+
+  min-height:54px;
+
+  padding:0 16px;
+
+  border:1.5px solid #dce6f1;
+
+  border-radius:16px;
+
+  background:#fbfdff;
+
+  color:#16253a;
+
+  font-size:15px;
+
+  outline:none;
+
+  transition:
+    border-color .2s ease,
+    box-shadow .2s ease,
+    transform .2s ease,
+    background .2s ease;
+
+  box-sizing:border-box;
+}
+
+.auth-form input::placeholder{
+  color:#a1adbb;
+}
+
+.auth-form input:focus{
+  background:#fff;
+
+  border-color:#2d7de1;
+
+  box-shadow:0 0 0 4px rgba(45,125,225,.12);
+
+  transform:translateY(-1px);
+}
+
+/* Password input */
+
+.password-input-wrap{
+  position:relative;
+  width:100%;
+}
+
+.password-input-wrap input{
+  padding-right:56px;
+}
+
+/* Password eye button */
+
+.password-toggle{
+  position:absolute;
+
+  top:50%;
+  right:8px;
+
+  transform:translateY(-50%);
+
+  width:42px;
+  height:42px;
+
+  border:0;
+
+  border-radius:12px;
+
+  background:transparent;
+
+  cursor:pointer;
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
+
+  font-size:17px;
+
+  transition:
+    background .2s ease,
+    transform .2s ease;
+}
+
+.password-toggle:hover{
+  background:#eef5ff;
+}
+
+.password-toggle:active{
+  transform:translateY(-50%) scale(.92);
+}
+
+/* Login button */
+
+.auth-primary{
+  width:100%;
+
+  min-height:55px;
+
+  margin-top:4px;
+
+  border:0;
+
+  border-radius:16px;
+
+  background:linear-gradient(
+    135deg,
+    #1769e0 0%,
+    #2d8be5 100%
+  );
+
+  color:#fff;
+
+  font-size:15px;
+  font-weight:900;
+
+  letter-spacing:.1px;
+
+  cursor:pointer;
+
+  box-shadow:
+    0 12px 28px rgba(23,105,224,.25);
+
+  transition:
+    transform .2s ease,
+    box-shadow .2s ease;
+
+  animation:authButtonGlow 3s ease-in-out infinite;
+}
+
+.auth-primary:hover{
+  transform:translateY(-2px);
+
+  box-shadow:
+    0 17px 35px rgba(23,105,224,.34);
+}
+
+.auth-primary:active{
+  transform:scale(.98);
+}
+
+.auth-primary:disabled{
+  opacity:.7;
+  cursor:not-allowed;
+  transform:none;
+}
+
+/* Links */
+
+.text-link{
+  display:block;
+
+  width:max-content;
+
+  margin:20px auto 0;
+
+  color:#2476d8;
+
+  text-decoration:none;
+
+  font-size:13px;
+  font-weight:800;
+
+  transition:transform .2s ease;
+}
+
+.text-link:hover{
+  transform:translateY(-1px);
+}
+
+/* Divider */
+
+.auth-divider{
+  display:flex;
+  align-items:center;
+  gap:12px;
+
+  margin:25px 0 16px;
+
+  color:#8b98a8;
+
+  font-size:12px;
+}
+
+.auth-divider::before,
+.auth-divider::after{
+  content:"";
+
+  height:1px;
+
+  flex:1;
+
+  background:#e6edf5;
+}
+
+/* Create account button */
+
+.auth-secondary{
+  width:100%;
+
+  min-height:52px;
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
+
+  border-radius:16px;
+
+  background:#f0f6ff;
+
+  border:1px solid #dce9fa;
+
+  color:#1769e0;
+
+  text-decoration:none;
+
+  font-size:14px;
+  font-weight:900;
+
+  transition:
+    transform .2s ease,
+    background .2s ease,
+    box-shadow .2s ease;
+}
+
+.auth-secondary:hover{
+  transform:translateY(-2px);
+
+  background:#e8f2ff;
+
+  box-shadow:0 8px 20px rgba(35,100,180,.1);
+}
+
+/* Error */
+
+.auth-error{
+  margin:0;
+
+  padding:11px 13px;
+
+  border-radius:12px;
+
+  background:#fff1f1;
+
+  color:#c53030;
+
+  font-size:12px;
+
+  text-align:center;
+}
+
+/* Animations */
+
+@keyframes authCardEnter{
+
+  from{
+    opacity:0;
+    transform:
+      translateY(35px)
+      scale(.96);
+  }
+
+  to{
+    opacity:1;
+    transform:
+      translateY(0)
+      scale(1);
+  }
+
+}
+
+@keyframes authLogoFloat{
+
+  0%,
+  100%{
+    transform:translateY(0);
+  }
+
+  50%{
+    transform:translateY(-7px);
+  }
+
+}
+
+@keyframes authFadeUp{
+
+  from{
+    opacity:0;
+    transform:translateY(20px);
+  }
+
+  to{
+    opacity:1;
+    transform:translateY(0);
+  }
+
+}
+
+@keyframes authButtonGlow{
+
+  0%,
+  100%{
+    box-shadow:
+      0 12px 28px rgba(23,105,224,.23);
+  }
+
+  50%{
+    box-shadow:
+      0 16px 35px rgba(45,139,229,.40);
+  }
+
+}
+
+@keyframes authBackgroundFloat{
+
+  0%,
+  100%{
+    transform:
+      translate3d(0,0,0)
+      scale(1);
+  }
+
+  50%{
+    transform:
+      translate3d(30px,25px,0)
+      scale(1.12);
+  }
+
+}
+
+/* Mobile */
+
+@media(max-width:480px){
+
+  .auth-shell{
+    padding:20px 14px;
+  }
+
+  .auth-card{
+    padding:28px 20px 24px;
+    border-radius:25px;
+  }
+
+  .auth-heading h1{
+    font-size:27px;
+  }
+
+}
+
+/* Accessibility */
+
+@media(prefers-reduced-motion:reduce){
+
+  .auth-card,
+  .cmc-auth-logo,
+  .auth-heading,
+  .auth-form,
+  .auth-primary,
+  .auth-shell::before,
+  .auth-shell::after{
+    animation:none !important;
+  }
+
+}
+
+/* ================================
+   GLOBAL NEXUS CAPITAL ADMIN TASK MANAGEMENT UI
+================================ */
+
+.task-list{
+  display:grid;
+  gap:12px;
+}
+
+.task-list .form-card{
+  padding:14px;
+  border-radius:16px;
+  box-shadow:0 6px 18px rgba(20,60,110,.07);
+}
+
+.task-list .secondary-button,
+.task-list .danger-button{
+  min-height:36px;
+  padding:7px 10px;
+  font-size:11px;
+  border-radius:10px;
+}
+
+.task-list img{
+  max-height:160px;
+  object-fit:cover;
+}
+
+.task-list .empty-document{
+  padding:9px 11px;
+  margin-top:6px;
+  border-radius:10px;
+  font-size:12px;
+}
+
+.task-list .admin-card-head{
+  align-items:flex-start;
+  gap:10px;
+}
+
+.task-list .muted{
+  font-size:12px;
+}
+
+/* Global Nexus Capital Rank finance cards — horizontal scrolling fix */
+.rank-finance-grid {
+  display: flex !important;
+  flex-wrap: nowrap !important;
+  gap: 10px !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  overflow-x: auto !important;
+  overflow-y: hidden !important;
+  padding: 2px 2px 12px !important;
+  margin-bottom: 14px !important;
+  box-sizing: border-box !important;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior-x: contain;
+  scroll-snap-type: x proximity;
+}
+
+.rank-finance-grid > div {
+  flex: 0 0 142px !important;
+  width: 142px !important;
+  min-width: 142px !important;
+  max-width: 142px !important;
+  box-sizing: border-box !important;
+  padding: 10px 12px !important;
+  scroll-snap-align: start;
+  overflow: visible !important;
+}
+
+.rank-finance-grid span {
+  display: block !important;
+  white-space: normal !important;
+  overflow-wrap: anywhere !important;
+}
+
+.rank-finance-grid strong {
+  display: block !important;
+  white-space: nowrap !important;
+  font-size: 15px !important;
+  overflow: visible !important;
+}
+
+.rank-card-body {
+  min-width: 0 !important;
+  overflow: hidden !important;
+}
+
+/* =========================================
+   Global Nexus Capital AUTH LOGO — FINAL RESPONSIVE POSITION
+========================================= */
+
+.cmc-auth-logo{
+  width:360px;
+  height:203px;
+  max-width:100%;
+  max-height:none;
+  object-fit:contain;
+  object-position:center;
+  margin:0 auto 12px;
+  display:block;
+  border-radius:18px;
+  animation:authLogoFloat 5s ease-in-out infinite;
+  filter:drop-shadow(0 8px 12px rgba(25,90,170,.12));
+}
+
+/* Compact Android-sized screens:
+   keep the logo large while improving its
+   vertical position and spacing. */
+@media (max-width:380px){
+  .cmc-auth-logo{
+    width:360px;
+    height:203px;
+    max-width:100%;
+    margin-top:-8px;
+    margin-bottom:4px;
+  }
+
+  .auth-card{
+    padding-top:20px;
+  }
+
+  .auth-heading{
+    margin-bottom:20px;
+  }
+}
+
+/* Regular phones and tablets */
+@media (min-width:381px) and (max-width:600px){
+  .cmc-auth-logo{
+    width:360px;
+    height:203px;
+    max-width:100%;
+    margin-top:-4px;
+    margin-bottom:8px;
+  }
+}
+
+/* Desktop/tablet */
+@media (min-width:601px){
+  .cmc-auth-logo{
+    width:360px;
+    height:203px;
+    max-width:100%;
+    margin-top:0;
+    margin-bottom:12px;
+  }
+}
+
+/* Respect reduced-motion preference */
+@media (prefers-reduced-motion:reduce){
+  .cmc-auth-logo{
+    animation:none !important;
+  }
+}
+
+/* ================================
+   Global Nexus Capital MANAGEMENT SALARY DASHBOARD
+   ================================ */
+
+.salary-summary-grid{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:10px;
+  margin:16px 0;
+}
+
+.salary-summary-card{
+  background:#fff;
+  border-radius:18px;
+  padding:15px;
+  box-shadow:0 6px 18px #dce6f5;
+}
+
+.salary-summary-card span{
+  display:block;
+  font-size:11px;
+  color:#718096;
+}
+
+.salary-summary-card strong{
+  display:block;
+  margin-top:6px;
+  font-size:20px;
+  color:#10203a;
+}
+
+.salary-summary-card small{
+  display:block;
+  margin-top:4px;
+  font-size:10px;
+  color:#8a97a9;
+}
+
+.salary-filter-row{
+  display:flex;
+  gap:8px;
+  margin:14px 0;
+  flex-wrap:wrap;
+}
+
+.salary-filter-row input,
+.salary-filter-row select{
+  flex:1;
+  min-width:130px;
+  border:1px solid #d8e2ef;
+  border-radius:12px;
+  padding:11px 12px;
+  font-size:12px;
+  background:#fff;
+  color:#10203a;
+  outline:none;
+}
+
+.salary-filter-row input:focus,
+.salary-filter-row select:focus{
+  border-color:#2d7de1;
+  box-shadow:0 0 0 3px rgba(45,125,225,.1);
+}
+
+.salary-contract-list,
+.salary-payment-list{
+  display:grid;
+  gap:10px;
+}
+
+.salary-contract-card,
+.salary-payment-card{
+  background:#fff;
+  border-radius:18px;
+  padding:16px;
+  box-shadow:0 6px 18px #dce6f5;
+}
+
+.salary-contract-head,
+.salary-payment-head{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:10px;
+  margin-bottom:12px;
+}
+
+.salary-contract-head h3,
+.salary-payment-head h3{
+  margin:0;
+  font-size:14px;
+  color:#10203a;
+}
+
+.salary-contract-head p,
+.salary-payment-head p{
+  margin:4px 0 0;
+  font-size:11px;
+  color:#718096;
+}
+
+.salary-status{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  white-space:nowrap;
+  border-radius:999px;
+  padding:5px 9px;
+  font-size:10px;
+  font-weight:800;
+}
+
+.salary-status.active,
+.salary-status.paid,
+.salary-status.successful{
+  background:#e8f8ef;
+  color:#16834b;
+}
+
+.salary-status.pending{
+  background:#fff8e8;
+  color:#9a6b00;
+}
+
+.salary-status.skipped,
+.salary-status.terminated,
+.salary-status.rejected{
+  background:#fff0ef;
+  color:#b42318;
+}
+
+.salary-status.completed{
+  background:#eaf2ff;
+  color:#1769e0;
+}
+
+.salary-contract-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:8px;
+}
+
+.salary-contract-stat{
+  background:#f7faff;
+  border-radius:12px;
+  padding:11px;
+}
+
+.salary-contract-stat span{
+  display:block;
+  font-size:10px;
+  color:#718096;
+}
+
+.salary-contract-stat strong{
+  display:block;
+  margin-top:5px;
+  font-size:13px;
+  color:#10203a;
+}
+
+.salary-contract-footer,
+.salary-payment-footer{
+  margin-top:12px;
+  padding-top:11px;
+  border-top:1px solid #edf1f6;
+  display:grid;
+  gap:5px;
+}
+
+.salary-contract-footer span,
+.salary-payment-footer span{
+  font-size:10px;
+  color:#718096;
+}
+
+.salary-contract-footer strong,
+.salary-payment-footer strong{
+  font-size:11px;
+  color:#263a57;
+  word-break:break-word;
+}
+
+.salary-payment-amount{
+  font-size:18px;
+  font-weight:900;
+  color:#1769e0;
+}
+
+.salary-payment-meta{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:8px;
+  margin-top:10px;
+}
+
+.salary-payment-meta>div{
+  background:#f7faff;
+  border-radius:11px;
+  padding:10px;
+}
+
+.salary-payment-meta span{
+  display:block;
+  font-size:10px;
+  color:#718096;
+}
+
+.salary-payment-meta strong{
+  display:block;
+  margin-top:4px;
+  font-size:11px;
+  color:#263a57;
+  word-break:break-word;
+}
+
+.salary-section-title{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  margin:22px 0 10px;
+}
+
+.salary-section-title h2{
+  margin:0;
+  font-size:17px;
+}
+
+.salary-section-title span{
+  font-size:10px;
+  color:#718096;
+}
+
+.salary-rule-list{
+  display:grid;
+  gap:8px;
+  margin:0;
+  padding:0;
+  list-style:none;
+}
+
+.salary-rule-list li{
+  background:#f7faff;
+  border-radius:12px;
+  padding:11px 12px;
+  font-size:11px;
+  color:#51647e;
+  line-height:1.45;
+}
+
+.salary-rule-list li strong{
+  color:#263a57;
+}
+
+.salary-empty{
+  background:#fff;
+  border-radius:18px;
+  padding:25px 16px;
+  text-align:center;
+  box-shadow:0 6px 18px #dce6f5;
+  color:#718096;
+  font-size:12px;
+}
+
+.salary-loading{
+  padding:20px;
+  text-align:center;
+  color:#718096;
+  font-size:12px;
+}
+
+.salary-refresh-row{
+  display:flex;
+  justify-content:flex-end;
+  margin:8px 0;
+}
+
+.salary-refresh-button{
+  border:0;
+  border-radius:10px;
+  padding:9px 12px;
+  background:#eaf2ff;
+  color:#1769e0;
+  font-size:11px;
+  font-weight:800;
+  cursor:pointer;
+}
+
+.salary-refresh-button:disabled{
+  opacity:.5;
+  cursor:not-allowed;
+}
+
+.salary-evaluate-card{
+  background:linear-gradient(135deg,#1769e0,#2d8be5);
+  color:#fff;
+  border-radius:20px;
+  padding:18px;
+  margin:16px 0;
+  box-shadow:0 10px 25px rgba(23,105,224,.2);
+}
+
+.salary-evaluate-card h2{
+  margin:0 0 5px;
+  font-size:17px;
+}
+
+.salary-evaluate-card p{
+  margin:0;
+  font-size:11px;
+  line-height:1.5;
+  opacity:.9;
+}
+
+.salary-evaluate-card button{
+  margin-top:13px;
+  border:0;
+  border-radius:11px;
+  padding:10px 14px;
+  background:#fff;
+  color:#1769e0;
+  font-weight:800;
+  font-size:11px;
+  cursor:pointer;
+}
+
+.salary-evaluate-card button:disabled{
+  opacity:.65;
+  cursor:not-allowed;
+}
+
+.salary-alert{
+  margin:10px 0;
+  padding:11px 12px;
+  border-radius:12px;
+  font-size:11px;
+  line-height:1.45;
+}
+
+.salary-alert.success{
+  background:#e8f8ef;
+  color:#16834b;
+}
+
+.salary-alert.error{
+  background:#fff0ef;
+  color:#b42318;
+}
+
+.salary-alert.info{
+  background:#eaf2ff;
+  color:#1769e0;
+}
+
+@media(max-width:360px){
+  .salary-summary-grid{
+    grid-template-columns:1fr 1fr;
+    gap:8px;
+  }
+
+  .salary-summary-card{
+    padding:12px;
+  }
+
+  .salary-summary-card strong{
+    font-size:17px;
+  }
+
+  .salary-contract-grid,
+  .salary-payment-meta{
+    grid-template-columns:1fr;
+  }
+
+  .salary-contract-head,
+  .salary-payment-head{
+    flex-direction:column;
+  }
+
+  .salary-status{
+    width:max-content;
+  }
+}
+
+@media(min-width:700px){
+  .salary-summary-grid{
+    grid-template-columns:repeat(4,1fr);
+  }
+}
+
+
+
+/* Global Nexus Capital branding */
+.global-brand-logo{display:block;width:150px;height:auto;object-fit:contain;margin:0 auto 12px;border-radius:8px;background:#fff}.admin-brand-logo{width:140px;margin:0 0 10px}.mini-admin-brand-logo{width:140px;margin:0 0 10px}.user-brand-logo{width:160px;margin:10px auto 0}

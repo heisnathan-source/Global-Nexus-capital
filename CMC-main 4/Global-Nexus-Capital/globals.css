@@ -1,0 +1,291 @@
+/* =========================================
+   Global Nexus Capital LOGIN PAGE ANIMATIONS
+========================================= */
+
+/* Animated background */
+
+.auth-shell{
+  position:relative;
+  overflow:hidden;
+}
+
+.auth-shell::before,
+.auth-shell::after{
+  content:"";
+  position:absolute;
+  border-radius:50%;
+  pointer-events:none;
+  filter:blur(10px);
+}
+
+.auth-shell::before{
+  width:260px;
+  height:260px;
+  background:rgba(45,125,225,.18);
+
+  top:-90px;
+  left:-90px;
+
+  animation:authBackgroundFloat 10s ease-in-out infinite;
+}
+
+.auth-shell::after{
+  width:220px;
+  height:220px;
+  background:rgba(88,166,255,.15);
+
+  bottom:-80px;
+  right:-70px;
+
+  animation:authBackgroundFloat 12s ease-in-out infinite reverse;
+}
+
+
+/* Keep login content above background */
+
+.auth-card{
+  position:relative;
+  z-index:2;
+
+  animation:
+    authCardEnter .7s cubic-bezier(.22,.9,.32,1);
+}
+
+
+/* Smooth card entrance */
+
+@keyframes authCardEnter{
+
+  0%{
+    opacity:0;
+    transform:
+      translateY(35px)
+      scale(.96);
+  }
+
+  100%{
+    opacity:1;
+    transform:
+      translateY(0)
+      scale(1);
+  }
+
+}
+
+
+/* Floating Global Nexus Capital logo */
+
+.cmc-auth-logo{
+
+  animation:
+    authLogoFloat 4s ease-in-out infinite;
+
+}
+
+
+@keyframes authLogoFloat{
+
+  0%,
+  100%{
+    transform:translateY(0);
+  }
+
+  50%{
+    transform:translateY(-8px);
+  }
+
+}
+
+
+/* Heading animation */
+
+.auth-heading{
+  animation:
+    authFadeUp .8s ease both;
+}
+
+
+.auth-form{
+  animation:
+    authFadeUp .9s ease both;
+}
+
+
+@keyframes authFadeUp{
+
+  0%{
+    opacity:0;
+    transform:translateY(20px);
+  }
+
+  100%{
+    opacity:1;
+    transform:translateY(0);
+  }
+
+}
+
+
+/* Animated inputs */
+
+.auth-form input{
+
+  transition:
+    transform .2s ease,
+    border-color .2s ease,
+    box-shadow .2s ease;
+
+}
+
+
+.auth-form input:focus{
+
+  transform:translateY(-2px);
+
+}
+
+
+/* Login button animation */
+
+.auth-primary{
+
+  transition:
+    transform .2s ease,
+    box-shadow .2s ease;
+
+  animation:
+    authButtonGlow 3s ease-in-out infinite;
+
+}
+
+
+.auth-primary:hover{
+
+  transform:translateY(-2px);
+
+  box-shadow:
+    0 14px 30px
+    rgba(23,105,224,.35);
+
+}
+
+
+.auth-primary:active{
+
+  transform:scale(.97);
+
+}
+
+
+@keyframes authButtonGlow{
+
+  0%,
+  100%{
+
+    box-shadow:
+      0 9px 22px
+      rgba(23,105,224,.20);
+
+  }
+
+  50%{
+
+    box-shadow:
+      0 12px 30px
+      rgba(45,139,229,.40);
+
+  }
+
+}
+
+
+/* Background floating animation */
+
+@keyframes authBackgroundFloat{
+
+  0%,
+  100%{
+
+    transform:
+      translate(0,0)
+      scale(1);
+
+  }
+
+  50%{
+
+    transform:
+      translate(30px,25px)
+      scale(1.12);
+
+  }
+
+}
+
+
+/* Respect reduced motion */
+
+@media(prefers-reduced-motion:reduce){
+
+  .auth-card,
+  .cmc-auth-logo,
+  .auth-heading,
+  .auth-form,
+  .auth-primary,
+  .auth-shell::before,
+  .auth-shell::after{
+
+    animation:none !important;
+
+  }
+
+}
+
+.admin-user-stats-card {
+  margin-top: 14px;
+}
+
+.admin-user-stats-card .admin-card-head {
+  align-items: flex-start;
+}
+
+.admin-user-stats-card .admin-card-head > div {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.admin-user-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.admin-user-stats-grid .stat-box {
+  min-width: 0;
+}
+
+.admin-user-stats-grid .stat-box strong {
+  display: block;
+  margin-top: 6px;
+  font-size: 22px;
+  line-height: 1.1;
+}
+
+@media (max-width: 520px) {
+  .admin-user-stats-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-user-stats-grid .stat-box {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+  }
+
+  .admin-user-stats-grid .stat-box strong {
+    margin-top: 0;
+  }
+}

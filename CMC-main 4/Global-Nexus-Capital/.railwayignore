@@ -1,0 +1,13 @@
+node_modules
+.next
+.git
+.env
+.env.local
+*.dump
+*.sql
+cookies.txt
+cookies3.txt
+cookies4.txt
+audit-files.txt
+withdrawal-files.txt
+*.bak

@@ -1,0 +1,390 @@
+import { getDb } from "@/lib/db.js";
+import {
+  verifySessionToken,
+  ADMIN_COOKIE_NAME,
+  VERIFICATION_COOKIE_NAME,
+} from "@/lib/session.js";
+
+function getSession(request) {
+  const cookie = request.headers.get("cookie") || "";
+
+  const adminMatch = cookie.match(
+    new RegExp(`${ADMIN_COOKIE_NAME}=([^;]+)`)
+  );
+
+  if (adminMatch) {
+    const session = verifySessionToken(adminMatch[1]);
+
+    if (session?.role === "admin") {
+      return session;
+    }
+  }
+
+  const staffMatch = cookie.match(
+    new RegExp(`${VERIFICATION_COOKIE_NAME}=([^;]+)`)
+  );
+
+  if (staffMatch) {
+    const session = verifySessionToken(staffMatch[1]);
+
+    if (session?.role === "verification_staff") {
+      return session;
+    }
+  }
+
+  return null;
+}
+
+export async function GET(request) {
+  const session = getSession(request);
+
+  if (!session) {
+    return Response.json(
+      { error: "Unauthorized" },
+      { status: 401 }
+    );
+  }
+
+  const db = getDb();
+
+  try {
+    /*
+     * IMPORTANT:
+     *
+     * Only verified deposits count toward staff liquidity.
+     *
+     * A deposit with an active exclusion belonging to the
+     * responsible staff member is removed from that staff
+     * member's eligible liquidity.
+     *
+     * Excluded transaction details are NOT returned here.
+     */
+
+    const staffResult = await db.query(`
+      SELECT
+        u.id,
+        u.name,
+        u.staff_login,
+        u.enabled AS is_active,
+        COALESCE(
+          u.withdrawal_liquidity_enabled,
+          TRUE
+        ) AS withdrawal_liquidity_enabled
+      FROM users u
+      WHERE u.role = 'verification_staff'
+      ORDER BY u.name ASC NULLS LAST
+    `);
+
+    const rows = [];
+
+    for (const staff of staffResult.rows) {
+      /*
+       * Eligible deposits:
+       *
+       * - verified
+       * - assigned to this staff member
+       * - NOT excluded by this same staff member
+       */
+      const depositsResult = await db.query(
+        `
+          SELECT
+            COALESCE(
+              SUM(d.amount) FILTER (
+                WHERE NOT EXISTS (
+                  SELECT 1
+                  FROM staff_report_exclusions e
+                  WHERE e.staff_id = d.assigned_staff_id
+                    AND e.transaction_type = 'deposit'
+                    AND e.transaction_id = d.id
+                    AND e.excluded = TRUE
+                )
+              ),
+              0
+            ) AS eligible_deposits,
+
+            COALESCE(
+              SUM(d.amount) FILTER (
+                WHERE EXISTS (
+                  SELECT 1
+                  FROM staff_report_exclusions e
+                  WHERE e.staff_id = d.assigned_staff_id
+                    AND e.transaction_type = 'deposit'
+                    AND e.transaction_id = d.id
+                    AND e.excluded = TRUE
+                )
+              ),
+              0
+            ) AS excluded_deposits,
+
+            COUNT(*) FILTER (
+              WHERE NOT EXISTS (
+                SELECT 1
+                FROM staff_report_exclusions e
+                WHERE e.staff_id = d.assigned_staff_id
+                  AND e.transaction_type = 'deposit'
+                  AND e.transaction_id = d.id
+                  AND e.excluded = TRUE
+              )
+            )::int AS eligible_deposit_count,
+
+            COUNT(*) FILTER (
+              WHERE EXISTS (
+                SELECT 1
+                FROM staff_report_exclusions e
+                WHERE e.staff_id = d.assigned_staff_id
+                  AND e.transaction_type = 'deposit'
+                  AND e.transaction_id = d.id
+                  AND e.excluded = TRUE
+              )
+            )::int AS excluded_deposit_count
+
+          FROM deposit_orders d
+          WHERE d.assigned_staff_id = $1
+            AND d.status = 'verified'
+        `,
+        [staff.id]
+      );
+
+      /*
+       * Withdrawals actually paid by this staff member.
+       *
+       * The processor is the person recorded in approved_by.
+       */
+      const withdrawalsResult = await db.query(
+        `
+          SELECT
+            COALESCE(
+              SUM(wo.gross_amount),
+              0
+            ) AS withdrawals_made,
+
+            COUNT(*)::int AS withdrawal_count
+
+          FROM withdrawal_orders wo
+          WHERE wo.approved_by = $1
+            AND wo.status = 'paid'
+        `,
+        [staff.id]
+      );
+
+      /*
+       * Active liquidity already reserved for withdrawals.
+       *
+       * This prevents the same liquidity being allocated twice.
+       */
+      const reservationsResult = await db.query(
+        `
+          SELECT
+            COALESCE(
+              SUM(r.amount) FILTER (
+                WHERE r.status = 'reserved'
+              ),
+              0
+            ) AS reserved_amount,
+
+            COUNT(*) FILTER (
+              WHERE r.status = 'reserved'
+            )::int AS reserved_count
+
+          FROM withdrawal_liquidity_reservations r
+          WHERE r.staff_id = $1
+        `,
+        [staff.id]
+      );
+
+      const deposits = depositsResult.rows[0];
+      const withdrawals = withdrawalsResult.rows[0];
+      const reservations = reservationsResult.rows[0];
+
+      const eligibleDeposits =
+        Number(deposits.eligible_deposits || 0);
+
+      const excludedDeposits =
+        Number(deposits.excluded_deposits || 0);
+
+      const withdrawalsMade =
+        Number(withdrawals.withdrawals_made || 0);
+
+      const reservedAmount =
+        Number(reservations.reserved_amount || 0);
+
+      /*
+       * Withdrawal liquidity is based only on eligible deposits.
+       *
+       * Already paid withdrawals and active reservations reduce
+       * what can still be allocated.
+       */
+      const availableLiquidity = Math.max(
+        0,
+        eligibleDeposits -
+          withdrawalsMade -
+          reservedAmount
+      );
+
+      rows.push({
+        staffId: staff.id,
+        staffName: staff.name || "Unnamed Staff",
+        staffLogin: staff.staff_login || "",
+        isActive: Boolean(staff.is_active),
+        withdrawalLiquidityEnabled:
+          Boolean(staff.withdrawal_liquidity_enabled),
+
+        eligibleDeposits,
+        eligibleDepositCount:
+          Number(deposits.eligible_deposit_count || 0),
+
+        /*
+         * This amount is included for Main Admin calculations,
+         * but excluded from the staff-facing response below.
+         */
+        excludedDeposits,
+        excludedDepositCount:
+          Number(deposits.excluded_deposit_count || 0),
+
+        withdrawalsMade,
+        withdrawalCount:
+          Number(withdrawals.withdrawal_count || 0),
+
+        reservedAmount,
+        reservedCount:
+          Number(reservations.reserved_count || 0),
+
+        availableLiquidity,
+      });
+    }
+
+    /*
+     * Staff can see everyone's operational figures.
+     *
+     * Only Main Admin receives excluded totals/details.
+     * The exclusion records themselves are never returned here.
+     */
+    const visibleRows = rows.map((row) => {
+      if (session.role === "admin") {
+        return row;
+      }
+
+      return {
+        staffId: row.staffId,
+        staffName: row.staffName,
+        staffLogin: row.staffLogin,
+        isActive: row.isActive,
+        withdrawalLiquidityEnabled:
+          row.withdrawalLiquidityEnabled,
+
+        eligibleDeposits:
+          row.eligibleDeposits,
+
+        eligibleDepositCount:
+          row.eligibleDepositCount,
+
+        withdrawalsMade:
+          row.withdrawalsMade,
+
+        withdrawalCount:
+          row.withdrawalCount,
+
+        reservedAmount:
+          row.reservedAmount,
+
+        reservedCount:
+          row.reservedCount,
+
+        availableLiquidity:
+          row.availableLiquidity,
+      };
+    });
+
+    const totals = rows.reduce(
+      (acc, row) => {
+        acc.eligibleDeposits += row.eligibleDeposits;
+        acc.excludedDeposits += row.excludedDeposits;
+        acc.withdrawalsMade += row.withdrawalsMade;
+        acc.reservedAmount += row.reservedAmount;
+        acc.availableLiquidity +=
+          row.availableLiquidity;
+        acc.eligibleDepositCount +=
+          row.eligibleDepositCount;
+        acc.excludedDepositCount +=
+          row.excludedDepositCount;
+        acc.withdrawalCount +=
+          row.withdrawalCount;
+        acc.reservedCount +=
+          row.reservedCount;
+
+        return acc;
+      },
+      {
+        eligibleDeposits: 0,
+        excludedDeposits: 0,
+        withdrawalsMade: 0,
+        reservedAmount: 0,
+        availableLiquidity: 0,
+        eligibleDepositCount: 0,
+        excludedDepositCount: 0,
+        withdrawalCount: 0,
+        reservedCount: 0,
+      }
+    );
+
+    const responseTotals =
+      session.role === "admin"
+        ? totals
+        : {
+            eligibleDeposits:
+              totals.eligibleDeposits,
+            withdrawalsMade:
+              totals.withdrawalsMade,
+            reservedAmount:
+              totals.reservedAmount,
+            availableLiquidity:
+              totals.availableLiquidity,
+            eligibleDepositCount:
+              totals.eligibleDepositCount,
+            withdrawalCount:
+              totals.withdrawalCount,
+            reservedCount:
+              totals.reservedCount,
+          };
+
+    return Response.json({
+      success: true,
+      generatedAt: new Date().toISOString(),
+
+      /*
+       * This tells the UI exactly what the numbers mean.
+       */
+      calculation: {
+        eligibleDeposits:
+          "Verified deposits assigned to staff and not excluded.",
+        withdrawalsMade:
+          "Paid withdrawals recorded against the staff member.",
+        reservedAmount:
+          "Withdrawal liquidity already reserved for processing.",
+        availableLiquidity:
+          "Eligible deposits minus paid withdrawals and active reservations.",
+      },
+
+      staff: visibleRows,
+      totals: responseTotals,
+
+      currentUser: {
+        id: session.userId,
+        role: session.role,
+      },
+    });
+  } catch (error) {
+    console.error(
+      "GET /api/admin/withdrawal-liquidity failed:",
+      error
+    );
+
+    return Response.json(
+      {
+        error:
+          "Unable to calculate withdrawal liquidity.",
+      },
+      { status: 500 }
+    );
+  }
+}

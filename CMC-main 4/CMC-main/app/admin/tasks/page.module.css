@@ -1,0 +1,197 @@
+.page{
+  max-width:560px !important;
+  margin:0 auto !important;
+  padding:18px 14px 80px !important;
+}
+
+/* Header */
+.page :global(.topbar){
+  margin-bottom:14px !important;
+}
+
+.page :global(.topbar h1){
+  font-size:24px !important;
+  margin:3px 0 5px !important;
+}
+
+.page :global(.eyebrow){
+  font-size:10px !important;
+  letter-spacing:1.8px !important;
+}
+
+.page :global(.topbar .muted){
+  font-size:12px !important;
+}
+
+/* Main cards */
+.page :global(.admin-card){
+  padding:16px !important;
+  margin:12px 0 !important;
+  border-radius:16px !important;
+  box-shadow:0 8px 24px rgba(20,60,110,.08) !important;
+}
+
+.page :global(.admin-card-head){
+  margin-bottom:10px !important;
+  gap:10px !important;
+}
+
+.page :global(.admin-card-head strong){
+  font-size:16px !important;
+}
+
+/* Form */
+.page :global(.form-card){
+  padding:0 !important;
+  margin:0 !important;
+  background:transparent !important;
+  box-shadow:none !important;
+  gap:9px !important;
+}
+
+.page :global(label){
+  margin:0 !important;
+  font-size:12px !important;
+}
+
+.page :global(input),
+.page :global(select){
+  min-height:38px !important;
+  padding:8px 11px !important;
+  font-size:13px !important;
+  border-radius:10px !important;
+}
+
+.page :global(textarea){
+  min-height:68px !important;
+  height:68px !important;
+  padding:9px 11px !important;
+  font-size:13px !important;
+  border-radius:10px !important;
+}
+
+/* Question and answers */
+.page :global(.form-section){
+  margin-top:10px !important;
+  padding-top:10px !important;
+  border-top:1px solid #edf1f6 !important;
+}
+
+.page :global(.section-heading){
+  margin-bottom:8px !important;
+}
+
+.page :global(.section-heading strong){
+  font-size:14px !important;
+}
+
+.page :global(.section-heading .muted){
+  font-size:11px !important;
+}
+
+.page :global(.answer-list){
+  gap:6px !important;
+}
+
+.page :global(.answer-row){
+  padding:6px !important;
+  min-height:auto !important;
+  border-radius:10px !important;
+}
+
+.page :global(.answer-row input){
+  min-height:36px !important;
+}
+
+.page :global(.answer-number){
+  font-size:12px !important;
+}
+
+/* Buttons */
+.page :global(.primary-button),
+.page :global(.secondary-button),
+.page :global(.danger-button){
+  min-height:38px !important;
+  padding:7px 11px !important;
+  border-radius:10px !important;
+  font-size:12px !important;
+}
+
+.page :global(.primary-button){
+  margin-top:4px !important;
+}
+
+/* Existing tasks */
+.page :global(.task-list){
+  gap:10px !important;
+}
+
+.page :global(.task-list .form-card){
+  padding:13px !important;
+  margin:0 !important;
+  background:#f9fbff !important;
+  border:1px solid #edf1f6 !important;
+  border-radius:14px !important;
+  box-shadow:none !important;
+}
+
+.page :global(.task-list .admin-card-head){
+  align-items:center !important;
+  margin-bottom:8px !important;
+}
+
+.page :global(.task-list .admin-card-head strong){
+  font-size:15px !important;
+}
+
+/* Make task images SMALL and clean */
+.page :global(.task-list img){
+  width:100% !important;
+  height:110px !important;
+  max-height:110px !important;
+  object-fit:contain !important;
+  background:#f3f6fa !important;
+  border-radius:12px !important;
+  margin-top:8px !important;
+}
+
+/* Current image preview */
+.page :global(.empty-document){
+  min-height:0 !important;
+  padding:9px !important;
+  margin:6px 0 !important;
+  border-radius:10px !important;
+  box-shadow:none !important;
+}
+
+.page :global(.empty-document img){
+  width:100% !important;
+  max-height:110px !important;
+  height:110px !important;
+  object-fit:contain !important;
+  background:#f3f6fa !important;
+}
+
+/* Task details */
+.page :global(.task-list .muted){
+  font-size:12px !important;
+  line-height:1.45 !important;
+}
+
+@media(max-width:600px){
+  .page{
+    padding:14px 12px 80px !important;
+  }
+
+  .page :global(.admin-card){
+    padding:14px !important;
+  }
+
+  .page :global(.topbar h1){
+    font-size:22px !important;
+  }
+
+  .page :global(.admin-card-head){
+    flex-wrap:wrap !important;
+  }
+}

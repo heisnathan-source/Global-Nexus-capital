@@ -1,0 +1,26 @@
+{
+  "name": "global-nexus-capital-platform",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint .",
+    "db:final-audit": "node scripts/apply_final_audit_patch.mjs",
+    "db:password-recovery": "node scripts/apply_password_recovery_patch.mjs",
+    "db:global-schedules": "node scripts/apply_global_schedules_patch.mjs"
+  },
+  "dependencies": {
+    "@aws-sdk/client-s3": "^3.1131.0",
+    "bcryptjs": "^2.4.3",
+    "next": "^15.0.0",
+    "pg": "^8.13.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "three": "0.185.1"
+  },
+  "devDependencies": {
+    "eslint-config-next": "16.3.3"
+  }
+}

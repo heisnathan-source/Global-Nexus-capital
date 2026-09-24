@@ -1,0 +1,3 @@
+import Link from "next/link";
+import RankView from "@/app/components/RankView";
+export default function Rank(){return <main className="mobile-shell scroll-page"><header className="topbar"><div><div className="eyebrow">Global Nexus Capital</div><h1>Rank</h1><p className="muted">Swipe left and right to view Global Nexus Capital ranks</p></div><Link className="icon-button" href="/">←</Link></header><RankView/><section className="admin-card"><strong>Rank purchase rule</strong><p className="muted">Any rank above your highest purchased rank is available. Purchased and lower ranks remain locked.</p></section></main>}

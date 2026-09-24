@@ -1,0 +1,411 @@
+import { getDb } from "./db.js";
+
+/*
+  CMC TASK CYCLE
+
+  Tasks reset every day at 12:00 PM Ghana time.
+
+  A user's task attempt belongs to the current task cycle.
+*/
+
+function getTaskCycleStart() {
+  const now = new Date();
+
+  const cycle = new Date(now);
+
+  cycle.setUTCHours(12, 0, 0, 0);
+
+  if (now < cycle) {
+    cycle.setUTCDate(cycle.getUTCDate() - 1);
+  }
+
+  return cycle;
+}
+
+
+/*
+==================================================
+GET AVAILABLE TASKS
+==================================================
+*/
+export async function getAvailableTasks(userId) {
+  const db = getDb();
+
+  const cycleStart = getTaskCycleStart();
+
+  const { rows } = await db.query(
+    `
+    SELECT
+      t.id,
+      t.title,
+      t.image_url,
+      t.question,
+      t.description AS description,
+      ts.description AS set_description,
+      ts.commission_per_task AS commission_amount,
+      r.name AS rank_name,
+
+      CASE
+        WHEN ta.id IS NOT NULL THEN TRUE
+        ELSE FALSE
+      END AS completed,
+
+      COALESCE(
+        (
+          SELECT json_agg(
+            json_build_object(
+              'id', topt.id,
+              'text', topt.option_text
+            )
+            ORDER BY topt.id
+          )
+          FROM task_options topt
+          WHERE topt.task_id = t.id
+        ),
+        '[]'::json
+      ) AS options
+
+    FROM tasks t
+
+    JOIN task_sets ts
+      ON ts.id = t.task_set_id
+     AND ts.active = TRUE
+
+    JOIN users u
+      ON u.id = $1
+
+    LEFT JOIN ranks r
+      ON r.id = ts.rank_id
+
+    LEFT JOIN task_attempts ta
+      ON ta.task_id = t.id
+     AND ta.user_id = $1
+     AND ta.created_at >= $2
+
+    WHERE
+      t.active = TRUE
+
+      AND u.rank_id IS NOT NULL
+
+      AND (
+        ts.rank_id IS NULL
+        OR ts.rank_id = u.rank_id
+      )
+
+    ORDER BY
+      t.display_order,
+      t.id DESC
+    `,
+    [userId, cycleStart]
+  );
+
+  return rows;
+}
+
+
+/*
+==================================================
+SUBMIT TASK
+==================================================
+*/
+export async function submitTask(userId, taskId, answer) {
+  const db = getDb();
+  const client = await db.connect();
+
+  try {
+    await client.query("BEGIN");
+
+    const cycleStart = getTaskCycleStart();
+
+    /*
+      Load task.
+    */
+    const task = await client.query(
+      `
+      SELECT
+        t.*,
+        ts.commission_per_task,
+        ts.rank_id AS task_rank_id,
+        ts.active AS set_active,
+        u.rank_id AS user_rank_id
+
+      FROM tasks t
+
+      JOIN task_sets ts
+        ON ts.id = t.task_set_id
+
+      JOIN users u
+        ON u.id = $2
+
+      WHERE
+        t.id = $1
+        AND t.active = TRUE
+
+      FOR UPDATE OF t, ts
+      `,
+      [taskId, userId]
+    );
+
+    if (!task.rowCount || !task.rows[0].set_active) {
+      throw new Error("Task is unavailable.");
+    }
+
+    const t = task.rows[0];
+
+
+    /*
+      User must have a rank.
+    */
+    if (!t.user_rank_id) {
+      throw new Error(
+        "Purchase a rank before performing tasks."
+      );
+    }
+
+
+    /*
+      Make sure task belongs to user's rank.
+    */
+    if (
+      t.task_rank_id &&
+      t.task_rank_id !== t.user_rank_id
+    ) {
+      throw new Error(
+        "This task is not available for your rank."
+      );
+    }
+
+
+    /*
+      Prevent duplicate completion.
+    */
+    const existing = await client.query(
+      `
+      SELECT id
+      FROM task_attempts
+      WHERE
+        task_id = $1
+        AND user_id = $2
+        AND created_at >= $3
+      FOR UPDATE
+      `,
+      [taskId, userId, cycleStart]
+    );
+
+    if (existing.rowCount) {
+      throw new Error(
+        "You have already submitted this task for the current cycle."
+      );
+    }
+
+
+    /*
+      Check the answer against the
+      correct option stored in task_options.
+    */
+    const correctOption = await client.query(
+      `
+      SELECT option_text
+      FROM task_options
+      WHERE
+        task_id = $1
+        AND is_correct = TRUE
+      LIMIT 1
+      `,
+      [taskId]
+    );
+
+    let isCorrect = false;
+
+    if (correctOption.rowCount) {
+      isCorrect =
+        String(answer ?? "")
+          .trim()
+          .toLowerCase() ===
+        String(correctOption.rows[0].option_text ?? "")
+          .trim()
+          .toLowerCase();
+    } else {
+      /*
+        Fallback for older tasks that only have
+        correct_answer stored on the tasks table.
+      */
+      isCorrect =
+        String(answer ?? "")
+          .trim()
+          .toLowerCase() ===
+        String(t.correct_answer ?? "")
+          .trim()
+          .toLowerCase();
+    }
+
+
+    /*
+      Commission is paid only for a correct answer.
+    */
+    const commission = isCorrect
+      ? Number(t.commission_per_task || 0)
+      : 0;
+
+
+    /*
+      Record the attempt.
+    */
+    const attempt = await client.query(
+      `
+      INSERT INTO task_attempts
+        (
+          task_id,
+          user_id,
+          answer,
+          correct,
+          commission,
+          status
+        )
+
+      VALUES
+        ($1, $2, $3, $4, $5, 'completed')
+
+      RETURNING *
+      `,
+      [
+        taskId,
+        userId,
+        String(answer ?? ""),
+        isCorrect,
+        commission
+      ]
+    );
+
+
+    /*
+      Pay commission when correct.
+    */
+    if (isCorrect && commission > 0) {
+
+      const wallet = await client.query(
+        `
+        SELECT available_balance
+        FROM wallets
+        WHERE user_id = $1
+        FOR UPDATE
+        `,
+        [userId]
+      );
+
+      if (!wallet.rowCount) {
+        throw new Error("Wallet not found.");
+      }
+
+      const after =
+        Number(wallet.rows[0].available_balance) +
+        commission;
+
+
+      await client.query(
+        `
+        UPDATE wallets
+        SET
+          available_balance = $1,
+          updated_at = NOW()
+
+        WHERE user_id = $2
+        `,
+        [after, userId]
+      );
+
+
+      /*
+        Create transaction record.
+      */
+      const tx = await client.query(
+        `
+        INSERT INTO transactions
+          (
+            user_id,
+            type,
+            amount,
+            fee,
+            status,
+            reference,
+            metadata
+          )
+
+        VALUES
+          (
+            $1,
+            'task_earning',
+            $2,
+            0,
+            'successful',
+            $3,
+            $4
+          )
+
+        RETURNING id
+        `,
+        [
+          userId,
+          commission,
+          `TASK-${attempt.rows[0].id}`,
+          JSON.stringify({
+            taskId,
+            attemptId: attempt.rows[0].id,
+            cycleStart
+          })
+        ]
+      );
+
+
+      /*
+        Add wallet ledger entry.
+      */
+      await client.query(
+        `
+        INSERT INTO wallet_ledger
+          (
+            user_id,
+            transaction_id,
+            entry_type,
+            amount,
+            balance_after,
+            description
+          )
+
+        VALUES
+          (
+            $1,
+            $2,
+            'task_earning',
+            $3,
+            $4,
+            $5
+          )
+        `,
+        [
+          userId,
+          tx.rows[0].id,
+          commission,
+          after,
+          `Task earning: ${t.title}`
+        ]
+      );
+    }
+
+
+    await client.query("COMMIT");
+
+    return attempt.rows[0];
+
+  } catch (e) {
+
+    try {
+      await client.query("ROLLBACK");
+    } catch {}
+
+    throw e;
+
+  } finally {
+    client.release();
+  }
+}
