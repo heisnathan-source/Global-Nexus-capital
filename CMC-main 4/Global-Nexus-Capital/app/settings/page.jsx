@@ -1,3 +1,0 @@
-import Link from "next/link";
-import SettingsForm from "../components/SettingsForm";
-export default function Settings(){return <main className="mobile-shell scroll-page"><header className="topbar"><div><div className="eyebrow">Global Nexus Capital</div><h1>Settings</h1><p className="muted">Account preferences</p></div><Link className="icon-button" href="/mine">←</Link></header><SettingsForm/><section className="admin-card"><strong>Account</strong><p className="muted">Password and Funds Password management use secure reset/change flows. Existing passwords are never displayed.</p></section></main>}

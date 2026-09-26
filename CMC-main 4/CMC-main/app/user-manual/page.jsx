@@ -1,2 +1,0 @@
-import Link from "next/link";
-export default function UserManual(){return <main className="mobile-shell"><header className="topbar"><div><div className="eyebrow">Global Nexus Capital</div><h1>User Manual</h1></div><Link className="icon-button" href="/mine">←</Link></header><section className="empty-document"><strong>User Manual coming soon</strong><p className="muted">Instructions can be published from Admin later.</p></section></main>}

@@ -1,5 +1,0 @@
-import bcrypt from "bcryptjs";
-import { getDb } from "@/lib/db.js";
-import { verifySessionToken, USER_COOKIE_NAME } from "@/lib/session.js";
-function session(request){const c=request.headers.get("cookie")||"";const m=c.match(new RegExp(`${USER_COOKIE_NAME}=([^;]+)`));const s=m?verifySessionToken(m[1]):null;return s&&s.role==="user"?s:null;}
-export async function POST(request){const s=session(request);if(!s)return Response.json({error:"Unauthorized"},{status:401});const account=await getDb().query("SELECT enabled FROM users WHERE id=$1 AND role='user'",[s.userId]);if(!account.rowCount)return Response.json({error:"Unable to update Funds Password."},{status:403});if(!account.rows[0].enabled)return Response.json({error:"Account is currently disabled."},{status:403});const {fundsPassword}=await request.json();if(!/^\d{6}$/.test(String(fundsPassword||"")))return Response.json({error:"Funds Password must contain exactly 6 numbers."},{status:400});const db=getDb();const hash=await bcrypt.hash(String(fundsPassword),12);await db.query("UPDATE users SET funds_password_hash=$1 WHERE id=$2",[hash,s.userId]);return Response.json({ok:true});}

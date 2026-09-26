@@ -1,0 +1,14 @@
+node_modules
+.next
+.env
+.env.local
+dist
+coverage
+
+# Environment files
+.env
+.env.local
+
+# Dependencies/build output
+node_modules/
+.next/
