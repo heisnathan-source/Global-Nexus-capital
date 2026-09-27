@@ -384,8 +384,8 @@ export async function POST(request) {
               $2,
               'approve_identity_verification',
               'identity_verification',
-              $2,
               $3,
+              $4,
               'Identity verification approved'
             )
         `,
@@ -516,9 +516,9 @@ export async function POST(request) {
             $2,
             'reject_identity_verification',
             'identity_verification',
-            $2,
             $3,
-            $4
+            $4,
+            $5
           )
       `,
       [
