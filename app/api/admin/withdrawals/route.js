@@ -143,17 +143,39 @@ async function audit(
  * Excluded deposits are deliberately NOT counted.
  */
 async function getStaffLiquidity(client, staffId) {
+  /*
+   * Calculate liquidity from the same records used by the
+   * withdrawal system. PostgreSQL SUM() values can arrive as
+   * strings, so normalize every amount explicitly.
+   *
+   * Rule remains unchanged:
+   *
+   * available =
+   *   eligible deposits
+   *   - paid withdrawals
+   *   - active reservations
+   *
+   * One staff member must still have the FULL withdrawal
+   * amount available.
+   */
+
   const deposits = await client.query(
     `
       SELECT
         COALESCE(
-          SUM(d.amount),
+          SUM(
+            CASE
+              WHEN d.amount IS NOT NULL
+              THEN d.amount::numeric
+              ELSE 0
+            END
+          ),
           0
-        ) AS eligible_deposits
+        )::numeric AS eligible_deposits
       FROM deposit_orders d
       WHERE d.assigned_staff_id = $1
-        AND d.status = 'verified'
-        AND d.staff_dashboard_status = 'included'
+        AND LOWER(COALESCE(d.status, '')) = 'verified'
+        AND LOWER(COALESCE(d.staff_dashboard_status, '')) = 'included'
     `,
     [staffId]
   );
@@ -163,16 +185,20 @@ async function getStaffLiquidity(client, staffId) {
       SELECT
         COALESCE(
           SUM(
-            COALESCE(
-              wo.net_amount,
-              wo.gross_amount - COALESCE(wo.fee_amount, 0)
-            )
+            CASE
+              WHEN wo.net_amount IS NOT NULL
+              THEN wo.net_amount::numeric
+              ELSE (
+                COALESCE(wo.gross_amount, 0)::numeric
+                - COALESCE(wo.fee_amount, 0)::numeric
+              )
+            END
           ),
           0
-        ) AS paid_withdrawals
+        )::numeric AS paid_withdrawals
       FROM withdrawal_orders wo
       WHERE wo.approved_by = $1
-        AND wo.status = 'paid'
+        AND LOWER(COALESCE(wo.status, '')) = 'paid'
     `,
     [staffId]
   );
@@ -181,9 +207,15 @@ async function getStaffLiquidity(client, staffId) {
     `
       SELECT
         COALESCE(
-          SUM(r.amount),
+          SUM(
+            CASE
+              WHEN r.amount IS NOT NULL
+              THEN r.amount::numeric
+              ELSE 0
+            END
+          ),
           0
-        ) AS reserved_amount
+        )::numeric AS reserved_amount
       FROM withdrawal_liquidity_reservations r
       WHERE r.staff_id = $1
         AND r.status = 'reserved'
@@ -192,16 +224,26 @@ async function getStaffLiquidity(client, staffId) {
   );
 
   const eligibleDeposits = Number(
-    deposits.rows[0]?.eligible_deposits || 0
+    deposits.rows[0]?.eligible_deposits ?? 0
   );
 
   const paid = Number(
-    paidWithdrawals.rows[0]?.paid_withdrawals || 0
+    paidWithdrawals.rows[0]?.paid_withdrawals ?? 0
   );
 
   const reserved = Number(
-    reservations.rows[0]?.reserved_amount || 0
+    reservations.rows[0]?.reserved_amount ?? 0
   );
+
+  if (
+    !Number.isFinite(eligibleDeposits) ||
+    !Number.isFinite(paid) ||
+    !Number.isFinite(reserved)
+  ) {
+    throw new Error(
+      "Unable to calculate staff withdrawal liquidity."
+    );
+  }
 
   return {
     eligibleDeposits,
@@ -1776,12 +1818,30 @@ export async function POST(request) {
         }
       }
 
+      /*
+       * Payment requires a processing withdrawal.
+       *
+       * Rejection may be performed on either:
+       *   - a pending withdrawal by an administrator
+       *   - a processing withdrawal by the assigned staff
+       *   - a processing withdrawal by an administrator
+       */
       if (
-        order.status !==
-        "processing"
+        action === "pay" &&
+        order.status !== "processing"
       ) {
         throw new Error(
           "Withdrawal is no longer processing."
+        );
+      }
+
+      if (
+        action === "reject" &&
+        order.status !== "pending" &&
+        order.status !== "processing"
+      ) {
+        throw new Error(
+          "Withdrawal can no longer be rejected."
         );
       }
 
