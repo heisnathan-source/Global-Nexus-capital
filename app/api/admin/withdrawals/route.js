@@ -2224,8 +2224,10 @@ export async function POST(request) {
               processed_at = NOW(),
               rejection_reason = $3
             WHERE id = $1
-              AND status =
+              AND status IN (
+                'pending',
                 'processing'
+              )
               ${
                 isStaff(session)
                   ? "AND claimed_by = $2"
@@ -2245,7 +2247,7 @@ export async function POST(request) {
         1
       ) {
         throw new Error(
-          "Withdrawal is no longer processing."
+          "Withdrawal can no longer be rejected."
         );
       }
 
