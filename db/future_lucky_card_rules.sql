@@ -1,0 +1,13 @@
+BEGIN;
+
+CREATE TABLE IF NOT EXISTS lucky_card_event_defaults (
+  id BOOLEAN PRIMARY KEY DEFAULT TRUE,
+  enabled BOOLEAN NOT NULL DEFAULT TRUE,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+INSERT INTO lucky_card_event_defaults (id, enabled)
+VALUES (TRUE, TRUE)
+ON CONFLICT (id) DO NOTHING;
+
+COMMIT;

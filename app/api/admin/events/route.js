@@ -155,18 +155,18 @@ export async function POST(request) {
 
   }
 
+  const db = getDb();
+  const client = await db.connect();
 
   try {
 
     const body =
       await request.json();
 
-
     const name =
       String(
         body.name || ""
       ).trim();
-
 
     if (!name) {
 
@@ -182,14 +182,12 @@ export async function POST(request) {
 
     }
 
-
     const allowedStatuses = [
       "draft",
       "locked",
       "active",
       "ended"
     ];
-
 
     const status =
       allowedStatuses.includes(
@@ -198,13 +196,13 @@ export async function POST(request) {
         ? body.status
         : "draft";
 
+    await client.query("BEGIN");
 
-    const db =
-      getDb();
-
-
+    /*
+     * Create the event first.
+     */
     const result =
-      await db.query(
+      await client.query(
         `
         INSERT INTO events
           (
@@ -245,11 +243,123 @@ export async function POST(request) {
         ]
       );
 
+    const event =
+      result.rows[0];
+
+    /*
+     * Future Lucky Card configuration.
+     *
+     * 1,000 total draw numbers:
+     *
+     * 650 = 20
+     * 300 = 60
+     *  50 = 300
+     *
+     * The complete prize pool is shuffled with RANDOM()
+     * and then assigned to draw numbers 1-1000.
+     *
+     * Box positions are independently randomized 1-6.
+     *
+     * These are POINTS prizes, not cash prizes.
+     */
+    const raffleEnabled =
+      await client.query(
+        `
+        SELECT enabled
+        FROM lucky_card_event_defaults
+        WHERE id = TRUE
+        LIMIT 1
+        `
+      );
+
+    if (
+      raffleEnabled.rows[0]?.enabled === true
+    ) {
+
+      await client.query(
+        `
+        INSERT INTO lucky_card_rules
+          (
+            event_id,
+            rank_id,
+            draws_required,
+            draw_number,
+            prize_name,
+            prize_amount,
+            prize_type,
+            max_winners,
+            box_position,
+            active
+          )
+
+        SELECT
+          $1,
+          NULL,
+          1,
+          draw_number,
+          prize_name,
+          prize_amount,
+          'points',
+          0,
+          1 + FLOOR(RANDOM() * 6)::int,
+          TRUE
+
+        FROM (
+
+          SELECT
+            ROW_NUMBER() OVER (
+              ORDER BY RANDOM()
+            )::int AS draw_number,
+
+            prize_name,
+            prize_amount
+
+          FROM (
+
+            /*
+             * 650 x 20
+             */
+            SELECT
+              '20 Cedi Prize'::text AS prize_name,
+              20::numeric AS prize_amount
+            FROM generate_series(1, 650)
+
+            UNION ALL
+
+            /*
+             * 300 x 60
+             */
+            SELECT
+              '60 Cedi Prize'::text,
+              60::numeric
+            FROM generate_series(1, 300)
+
+            UNION ALL
+
+            /*
+             * 50 x 300
+             */
+            SELECT
+              '300 Cedi Prize'::text,
+              300::numeric
+            FROM generate_series(1, 50)
+
+          ) AS prize_pool
+
+        ) AS randomized_pool
+
+        ORDER BY draw_number
+        `,
+        [event.id]
+      );
+
+    }
+
+    await client.query("COMMIT");
 
     return Response.json(
       {
-        event:
-          result.rows[0]
+        event
       },
       {
         status: 201
@@ -258,6 +368,8 @@ export async function POST(request) {
 
   } catch (error) {
 
+    await client.query("ROLLBACK");
+
     console.error(
       "Admin events POST:",
       error
@@ -265,17 +377,21 @@ export async function POST(request) {
 
     return Response.json(
       {
-        error: "Could not create event."
+        error:
+          "Could not create event."
       },
       {
         status: 400
       }
     );
 
+  } finally {
+
+    client.release();
+
   }
 
 }
-
 
 /*
  * PUT
