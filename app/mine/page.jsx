@@ -979,6 +979,14 @@ export default function MinePage() {
           </Link>
 
           <Link
+            href="/points-mall"
+            className="feature-card"
+          >
+            <span className="feature-icon">🛍️</span>
+            <span>Points Mall</span>
+          </Link>
+
+          <Link
             href="/team-expansion"
             className="feature-card"
           >
