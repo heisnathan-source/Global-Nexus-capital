@@ -63,18 +63,16 @@ export async function GET(request) {
           lcr.*,
           e.name AS event_name,
           r.name AS rank_name,
-          COUNT(lcd.id)::int AS draw_count
+          (
+            SELECT COUNT(*)::int
+            FROM lucky_card_draws lcd
+            WHERE lcd.rule_id = lcr.id
+          ) AS draw_count
         FROM lucky_card_rules lcr
         LEFT JOIN events e
           ON e.id = lcr.event_id
         LEFT JOIN ranks r
           ON r.id = lcr.rank_id
-        LEFT JOIN lucky_card_draws lcd
-          ON lcd.rule_id = lcr.id
-        GROUP BY
-          lcr.id,
-          e.name,
-          r.name
         ORDER BY
           lcr.draws_required ASC,
           lcr.id DESC
