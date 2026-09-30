@@ -367,12 +367,13 @@ export async function PUT(request) {
         `
           SELECT
             lcr.id,
-            COUNT(lcd.id)::int AS draw_count
+            (
+              SELECT COUNT(*)::int
+              FROM lucky_card_draws lcd
+              WHERE lcd.rule_id = lcr.id
+            ) AS draw_count
           FROM lucky_card_rules lcr
-          LEFT JOIN lucky_card_draws lcd
-            ON lcd.rule_id = lcr.id
           WHERE lcr.id = $1
-          GROUP BY lcr.id
         `,
         [ruleId]
       );
