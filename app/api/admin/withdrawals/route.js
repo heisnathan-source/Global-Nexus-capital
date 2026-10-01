@@ -487,8 +487,7 @@ async function allocateWithdrawal(
       SET
         status = 'processing',
         claimed_by = $2,
-        claimed_at = NOW(),
-        claim_activity_at = NOW()
+        claimed_at = NOW()
       WHERE id = $1
         AND status = 'pending'
         AND claimed_by IS NULL
