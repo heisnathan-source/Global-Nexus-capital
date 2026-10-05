@@ -4,10 +4,10 @@ import {
   USER_COOKIE_NAME
 } from "@/lib/session.js";
 
-const ALLOWED_AVATARS = [
-  "avatar1",
-  "avatar2"
-];
+const ALLOWED_AVATARS = new Set([
+  "cmc-avatar-1",
+  "cmc-avatar-2",
+]);
 
 function getSession(request) {
   const cookie = request.headers.get("cookie") || "";
@@ -41,12 +41,10 @@ export async function GET(request) {
     const result = await db.query(
       `
       SELECT
-        COALESCE(
-          selected_avatar,
-          'avatar1'
-        ) AS selected_avatar
+        COALESCE(avatar_id, 'cmc-avatar-1') AS avatar_id
       FROM users
       WHERE id = $1
+        AND role = 'user'
       `,
       [session.userId]
     );
@@ -59,24 +57,15 @@ export async function GET(request) {
     }
 
     return Response.json({
-      selected_avatar:
-        result.rows[0].selected_avatar
+      avatarId: result.rows[0].avatar_id
     });
 
   } catch (error) {
-    console.error(
-      "GET AVATAR ERROR:",
-      error
-    );
+    console.error("GET AVATAR ERROR:", error);
 
     return Response.json(
-      {
-        error:
-          "Unable to load avatar selection."
-      },
-      {
-        status: 500
-      }
+      { error: "Unable to load avatar selection." },
+      { status: 500 }
     );
   }
 }
@@ -94,20 +83,14 @@ export async function POST(request) {
   try {
     const body = await request.json();
 
-    const avatar =
-      String(
-        body?.avatar || ""
-      ).trim();
+    const avatarId = String(
+      body?.avatarId || ""
+    ).trim();
 
-    if (!ALLOWED_AVATARS.includes(avatar)) {
+    if (!ALLOWED_AVATARS.has(avatarId)) {
       return Response.json(
-        {
-          error:
-            "Invalid avatar selection."
-        },
-        {
-          status: 400
-        }
+        { error: "Invalid avatar selection." },
+        { status: 400 }
       );
     }
 
@@ -116,45 +99,36 @@ export async function POST(request) {
     const result = await db.query(
       `
       UPDATE users
-      SET selected_avatar = $1
+      SET avatar_id = $1
       WHERE id = $2
-      RETURNING
-        id,
-        selected_avatar
+        AND role = 'user'
+        AND enabled = TRUE
+      RETURNING id, avatar_id
       `,
       [
-        avatar,
+        avatarId,
         session.userId
       ]
     );
 
     if (!result.rowCount) {
       return Response.json(
-        { error: "Account not found." },
+        { error: "Account not found or unavailable." },
         { status: 404 }
       );
     }
 
     return Response.json({
       success: true,
-      selected_avatar:
-        result.rows[0].selected_avatar
+      avatarId: result.rows[0].avatar_id
     });
 
   } catch (error) {
-    console.error(
-      "SAVE AVATAR ERROR:",
-      error
-    );
+    console.error("SAVE AVATAR ERROR:", error);
 
     return Response.json(
-      {
-        error:
-          "Unable to save avatar selection."
-      },
-      {
-        status: 500
-      }
+      { error: "Unable to save avatar selection." },
+      { status: 500 }
     );
   }
 }

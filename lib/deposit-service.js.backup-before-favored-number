@@ -187,11 +187,6 @@ export async function createDepositOrder(
         OR p.max_amount >= $2
       )
       ORDER BY
-        CASE
-          WHEN p.account_number = '0203581660'
-            THEN -LN(GREATEST(RANDOM(), 0.000001)) / 3.0
-          ELSE -LN(GREATEST(RANDOM(), 0.000001))
-        END,
         p.last_assigned_at NULLS FIRST,
         p.account_number
       LIMIT 1

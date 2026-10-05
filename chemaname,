@@ -1,0 +1,62 @@
+    table_name     |                constraint_name                 | constraint_type | column_name 
+-------------------+------------------------------------------------+-----------------+-------------
+ deposit_orders    | deposit_orders_amount_check                    | CHECK           | 
+ deposit_orders    | deposit_orders_amount_not_null                 | CHECK           | 
+ deposit_orders    | deposit_orders_assigned_at_not_null            | CHECK           | 
+ deposit_orders    | deposit_orders_created_at_not_null             | CHECK           | 
+ deposit_orders    | deposit_orders_id_not_null                     | CHECK           | 
+ deposit_orders    | deposit_orders_staff_dashboard_status_check    | CHECK           | 
+ deposit_orders    | deposit_orders_staff_dashboard_status_not_null | CHECK           | 
+ deposit_orders    | deposit_orders_status_check                    | CHECK           | 
+ deposit_orders    | deposit_orders_status_not_null                 | CHECK           | 
+ deposit_orders    | deposit_orders_user_id_not_null                | CHECK           | 
+ deposit_orders    | deposit_orders_pkey                            | PRIMARY KEY     | id
+ transactions      | transactions_amount_check                      | CHECK           | 
+ transactions      | transactions_amount_not_null                   | CHECK           | 
+ transactions      | transactions_created_at_not_null               | CHECK           | 
+ transactions      | transactions_fee_check                         | CHECK           | 
+ transactions      | transactions_fee_not_null                      | CHECK           | 
+ transactions      | transactions_id_not_null                       | CHECK           | 
+ transactions      | transactions_metadata_not_null                 | CHECK           | 
+ transactions      | transactions_reference_not_null                | CHECK           | 
+ transactions      | transactions_status_not_null                   | CHECK           | 
+ transactions      | transactions_type_check                        | CHECK           | 
+ transactions      | transactions_type_not_null                     | CHECK           | 
+ transactions      | transactions_updated_at_not_null               | CHECK           | 
+ transactions      | transactions_user_id_not_null                  | CHECK           | 
+ transactions      | transactions_pkey                              | PRIMARY KEY     | id
+ users             | users_avatar_id_not_null                       | CHECK           | 
+ users             | users_created_at_not_null                      | CHECK           | 
+ users             | users_enabled_not_null                         | CHECK           | 
+ users             | users_id_not_null                              | CHECK           | 
+ users             | users_identity_status_check                    | CHECK           | 
+ users             | users_identity_status_not_null                 | CHECK           | 
+ users             | users_login_password_hash_not_null             | CHECK           | 
+ users             | users_name_not_null                            | CHECK           | 
+ users             | users_phone_not_null                           | CHECK           | 
+ users             | users_registration_date_not_null               | CHECK           | 
+ users             | users_role_check                               | CHECK           | 
+ users             | users_role_not_null                            | CHECK           | 
+ users             | users_staff_report_exclusion_enabled_not_null  | CHECK           | 
+ users             | users_withdrawal_enabled_not_null              | CHECK           | 
+ users             | users_withdrawal_frequency_exempt_not_null     | CHECK           | 
+ users             | users_withdrawal_liquidity_enabled_not_null    | CHECK           | 
+ users             | users_pkey                                     | PRIMARY KEY     | id
+ wallets           | wallets_available_balance_not_null             | CHECK           | 
+ wallets           | wallets_reserved_balance_not_null              | CHECK           | 
+ wallets           | wallets_updated_at_not_null                    | CHECK           | 
+ wallets           | wallets_user_id_not_null                       | CHECK           | 
+ wallets           | wallets_pkey                                   | PRIMARY KEY     | user_id
+ withdrawal_orders | withdrawal_orders_created_at_not_null          | CHECK           | 
+ withdrawal_orders | withdrawal_orders_fee_amount_not_null          | CHECK           | 
+ withdrawal_orders | withdrawal_orders_gross_amount_check           | CHECK           | 
+ withdrawal_orders | withdrawal_orders_gross_amount_not_null        | CHECK           | 
+ withdrawal_orders | withdrawal_orders_id_not_null                  | CHECK           | 
+ withdrawal_orders | withdrawal_orders_net_amount_check             | CHECK           | 
+ withdrawal_orders | withdrawal_orders_net_amount_not_null          | CHECK           | 
+ withdrawal_orders | withdrawal_orders_status_check                 | CHECK           | 
+ withdrawal_orders | withdrawal_orders_status_not_null              | CHECK           | 
+ withdrawal_orders | withdrawal_orders_user_id_not_null             | CHECK           | 
+ withdrawal_orders | withdrawal_orders_pkey                         | PRIMARY KEY     | id
+(58 rows)
+

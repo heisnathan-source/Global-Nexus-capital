@@ -1,0 +1,19 @@
+Restore for the current Global Nexus Capital repository.
+
+Files:
+  app/points-mall/page.jsx
+
+The page restores the original Points Shop behavior:
+- two-column shop grid
+- clickable product cards
+- Redeem Item confirmation
+- POST /api/points/purchase
+- balance update after purchase
+- purchase history
+- points history
+- congratulations screen
+- contact-admin prompt
+
+The supplied page expects the existing /api/points and /api/points/purchase routes; it does not alter the database or purchase API.
+
+The CSS block in apply-points-mall-restore.sh adds the two-column layout, clickable cards, modal and celebration styling. It also adds rotating card colors for the visible shop items.

@@ -1,0 +1,266 @@
+"use client";
+
+import Link from "next/link";
+import { useEffect, useState } from "react";
+
+export default function PointsMall() {
+  const [data, setData] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+
+  async function loadMall() {
+    try {
+      setLoading(true);
+      setError("");
+
+      const response = await fetch("/api/points", {
+        credentials: "include",
+        cache: "no-store",
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(
+          result?.error || "Unable to load Points Mall."
+        );
+      }
+
+      setData(result);
+    } catch (err) {
+      setError(
+        err?.message || "Unable to load Points Mall."
+      );
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  useEffect(() => {
+    loadMall();
+  }, []);
+
+  if (loading) {
+    return (
+      <main className="mobile-shell scroll-page">
+        <section className="empty-document">
+          <strong>Loading Points Mall…</strong>
+        </section>
+      </main>
+    );
+  }
+
+  if (error) {
+    return (
+      <main className="mobile-shell scroll-page">
+        <header className="topbar">
+          <div>
+            <div className="eyebrow">
+              GLOBAL NEXUS CAPITAL
+            </div>
+            <h1>Points Mall</h1>
+          </div>
+
+          <Link className="icon-button" href="/mine">
+            ←
+          </Link>
+        </header>
+
+        <section className="admin-card">
+          <strong>Unable to load Points Mall</strong>
+          <p className="muted">{error}</p>
+
+          <button
+            className="primary-button"
+            onClick={loadMall}
+          >
+            Try Again
+          </button>
+        </section>
+      </main>
+    );
+  }
+
+  const points =
+    Number(
+      data?.points ??
+      data?.balance ??
+      data?.pointsBalance ??
+      0
+    );
+
+  /*
+   * The Points API exposes active Points Shop
+   * products through the "items" property.
+   */
+  const rewards =
+    Array.isArray(data?.items)
+      ? data.items
+      : [];
+
+  return (
+    <main className="mobile-shell scroll-page">
+
+      <header className="topbar">
+        <div>
+          <div className="eyebrow">
+            GLOBAL NEXUS CAPITAL
+          </div>
+
+          <h1>Points Mall</h1>
+
+          <p className="muted">
+            Redeem your points for available rewards.
+          </p>
+        </div>
+
+        <Link
+          className="icon-button"
+          href="/mine"
+          aria-label="Back"
+        >
+          ←
+        </Link>
+      </header>
+
+      <section className="balance-card">
+        <span>Your Points</span>
+
+        <strong>
+          {points.toLocaleString()}
+        </strong>
+
+        <div className="account-meta">
+          <span>Available to redeem</span>
+          <span>Points Mall</span>
+        </div>
+      </section>
+
+      <section className="admin-card">
+        <div className="admin-card-head">
+          <strong>Available Rewards</strong>
+
+          <span className="badge">
+            {rewards.length}
+          </span>
+        </div>
+
+        {rewards.length === 0 ? (
+          <div className="empty-document">
+            <div>
+              <div
+                className="feature-icon"
+                style={{ marginBottom: 10 }}
+              >
+                ⭐
+              </div>
+
+              <strong>
+                No rewards available yet
+              </strong>
+
+              <p className="muted">
+                New rewards will appear here when
+                they are published by Global Nexus Capital.
+              </p>
+            </div>
+          </div>
+        ) : (
+          <div
+            style={{
+              display: "grid",
+              gap: 12,
+            }}
+          >
+            {rewards.map((item) => {
+              const required =
+                Number(
+                  item.points_required ??
+                  item.pointsRequired ??
+                  0
+                );
+
+              const image =
+                item.image_url ??
+                item.imageUrl ??
+                "";
+
+              const name =
+                item.name ||
+                "Reward";
+
+              const description =
+                item.description ||
+                "Redeem your points for this reward.";
+
+              return (
+                <div
+                  key={item.id}
+                  className="fund-card"
+                  style={{
+                    gridTemplateColumns:
+                      "70px 1fr",
+                  }}
+                >
+                  <div className="fund-image">
+                    {image ? (
+                      <img
+                        src={image}
+                        alt={name}
+                        style={{
+                          width: "100%",
+                          height: "100%",
+                          objectFit: "cover",
+                          borderRadius: 15,
+                        }}
+                      />
+                    ) : (
+                      "⭐"
+                    )}
+                  </div>
+
+                  <div>
+                    <h2>{name}</h2>
+
+                    <p
+                      className="muted"
+                      style={{
+                        margin: "4px 0 8px",
+                      }}
+                    >
+                      {description}
+                    </p>
+
+                    <strong>
+                      {required.toLocaleString()} points
+                    </strong>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        )}
+      </section>
+
+      <section className="admin-card">
+        <strong>How Points Mall Works</strong>
+
+        <p className="muted">
+          Use your available points to redeem
+          rewards published in the Points Shop.
+        </p>
+
+        <p className="muted">
+          Your points are deducted when a
+          redemption is successfully processed.
+        </p>
+
+        <p className="muted">
+          Your redemption history remains
+          recorded in your account.
+        </p>
+      </section>
+
+    </main>
+  );
+}
