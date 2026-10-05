@@ -93,6 +93,7 @@ export async function GET(request) {
     return Response.json(
       {
         error:
+          error?.message ||
           "Unable to load Raffle Ticket settings.",
       },
       { status: 500 }
