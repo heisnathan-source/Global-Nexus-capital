@@ -6,6 +6,7 @@ import {
   verifySessionToken,
   USER_COOKIE_NAME,
 } from "@/lib/session.js";
+import { getDb } from "@/lib/db.js";
 
 function session(request) {
   const cookie =
@@ -25,10 +26,47 @@ function session(request) {
     : null;
 }
 
-export async function GET() {
+export async function GET(request) {
   try {
+    const products = await getFundProducts();
+
+    const sessionData = session(request);
+
+    let purchases = [];
+
+    if (sessionData) {
+      const db = getDb();
+
+      const purchasesResult = await db.query(
+        `
+        SELECT
+          fp.id,
+          fp.purchase_amount,
+          fp.interest_rate,
+          fp.expected_return,
+          fp.maturity_at,
+          fp.status,
+          fp.fund_product_id,
+          fp.fund_product_id AS product_id,
+          f.name AS fund_name,
+          f.description AS fund_description,
+          f.image_url,
+          f.period_days
+        FROM fund_purchases fp
+        JOIN fund_products f
+          ON f.id = fp.fund_product_id
+        WHERE fp.user_id = $1
+        ORDER BY fp.maturity_at DESC, fp.id DESC
+        `,
+        [sessionData.userId]
+      );
+
+      purchases = purchasesResult.rows;
+    }
+
     return Response.json({
-      products: await getFundProducts(),
+      products,
+      purchases,
     });
   } catch (error) {
     console.error(

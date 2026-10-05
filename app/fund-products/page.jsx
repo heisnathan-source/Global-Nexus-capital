@@ -3,17 +3,82 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
+function formatMoney(value) {
+  const number = Number(value);
+
+  if (!Number.isFinite(number)) {
+    return "GHS 0.00";
+  }
+
+  return `GHS ${number.toLocaleString(undefined, {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  })}`;
+}
+
+function formatDate(value) {
+  if (!value) {
+    return "—";
+  }
+
+  const date = new Date(value);
+
+  if (Number.isNaN(date.getTime())) {
+    return "—";
+  }
+
+  return date.toLocaleString("en-GH", {
+    dateStyle: "medium",
+    timeStyle: "short",
+  });
+}
+
+function isMatured(purchase) {
+  return String(purchase.status || "").toLowerCase() === "matured";
+}
+
 export default function Funds() {
   const [products, setProducts] = useState([]);
+  const [purchases, setPurchases] = useState([]);
   const [amounts, setAmounts] = useState({});
   const [status, setStatus] = useState("");
   const [busy, setBusy] = useState(null);
+  const [loadingPurchases, setLoadingPurchases] = useState(true);
+
+  async function loadFunds() {
+    try {
+      setLoadingPurchases(true);
+
+      const response = await fetch(
+        "/api/fund-products",
+        {
+          cache: "no-store",
+        }
+      );
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(
+          data.error ||
+            "Unable to load fund products."
+        );
+      }
+
+      setProducts(data.products || []);
+      setPurchases(data.purchases || []);
+    } catch (error) {
+      setStatus(
+        error.message ||
+          "Unable to load fund products."
+      );
+    } finally {
+      setLoadingPurchases(false);
+    }
+  }
 
   useEffect(() => {
-    fetch("/api/fund-products")
-      .then((r) => r.json())
-      .then((d) => setProducts(d.products || []))
-      .catch((e) => setStatus(e.message));
+    loadFunds();
   }, []);
 
   function calculate(product) {
@@ -89,7 +154,7 @@ export default function Funds() {
     setBusy(product.id);
 
     try {
-      const r = await fetch(
+      const response = await fetch(
         "/api/fund-products",
         {
           method: "POST",
@@ -103,11 +168,11 @@ export default function Funds() {
         }
       );
 
-      const d = await r.json();
+      const data = await response.json();
 
-      if (!r.ok) {
+      if (!response.ok) {
         throw new Error(
-          d.error || "Purchase failed."
+          data.error || "Purchase failed."
         );
       }
 
@@ -119,12 +184,24 @@ export default function Funds() {
         ...current,
         [product.id]: "",
       }));
-    } catch (e) {
-      setStatus(e.message);
+
+      // Refresh products and purchases so the
+      // newly purchased fund appears immediately.
+      await loadFunds();
+    } catch (error) {
+      setStatus(error.message);
     } finally {
       setBusy(null);
     }
   }
+
+  const activePurchases = purchases.filter(
+    (purchase) => !isMatured(purchase)
+  );
+
+  const maturedPurchases = purchases.filter(
+    (purchase) => isMatured(purchase)
+  );
 
   return (
     <main className="mobile-shell scroll-page">
@@ -219,16 +296,17 @@ export default function Funds() {
                   <div className="form-card">
                     <label>
                       Buy Amount
+
                       <input
                         inputMode="decimal"
                         value={
                           amounts[product.id] || ""
                         }
-                        onChange={(e) =>
+                        onChange={(event) =>
                           setAmounts((current) => ({
                             ...current,
                             [product.id]:
-                              e.target.value,
+                              event.target.value,
                           }))
                         }
                         placeholder="Enter amount"
@@ -240,13 +318,9 @@ export default function Funds() {
 
                       <strong>
                         {calc
-                          ? `GHS ${calc.interest.toLocaleString(
-                              undefined,
-                              {
-                                minimumFractionDigits: 2,
-                                maximumFractionDigits: 2,
-                              }
-                            )}`
+                          ? formatMoney(
+                              calc.interest
+                            )
                           : "—"}
                       </strong>
                     </div>
@@ -258,13 +332,9 @@ export default function Funds() {
 
                       <strong>
                         {calc
-                          ? `GHS ${calc.maturity.toLocaleString(
-                              undefined,
-                              {
-                                minimumFractionDigits: 2,
-                                maximumFractionDigits: 2,
-                              }
-                            )}`
+                          ? formatMoney(
+                              calc.maturity
+                            )
                           : "—"}
                       </strong>
                     </div>
@@ -306,14 +376,246 @@ export default function Funds() {
       </section>
 
       <section className="admin-card">
-        <strong>My Fund Purchases</strong>
+        <div className="admin-card-head">
+          <strong>My Fund Purchases</strong>
 
-        <div className="empty-document">
-          <span>
-            Active and matured fund records will
-            appear here.
-          </span>
+          {purchases.length > 0 && (
+            <span className="badge">
+              {purchases.length}{" "}
+              {purchases.length === 1
+                ? "purchase"
+                : "purchases"}
+            </span>
+          )}
         </div>
+
+        {loadingPurchases ? (
+          <div className="empty-document">
+            <span>
+              Loading your fund purchases…
+            </span>
+          </div>
+        ) : purchases.length === 0 ? (
+          <div className="empty-document">
+            <span>
+              You have no fund purchases yet.
+            </span>
+          </div>
+        ) : (
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              gap: "16px",
+            }}
+          >
+            {activePurchases.length > 0 && (
+              <div>
+                <h2
+                  style={{
+                    marginBottom: 12,
+                  }}
+                >
+                  Active Funds
+                </h2>
+
+                <div
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: "12px",
+                  }}
+                >
+                  {activePurchases.map(
+                    (purchase) => (
+                      <article
+                        key={purchase.id}
+                        className="form-card"
+                      >
+                        {purchase.image_url && (
+                          <img
+                            src={purchase.image_url}
+                            alt={purchase.fund_name}
+                            style={{
+                              width: "100%",
+                              borderRadius: 14,
+                              marginBottom: 12,
+                              display: "block",
+                            }}
+                          />
+                        )}
+
+                        <div className="admin-card-head">
+                          <div>
+                            <strong>
+                              {purchase.fund_name}
+                            </strong>
+
+                            <p className="muted">
+                              {purchase.interest_rate}%
+                              {" · "}
+                              {purchase.period_days} days
+                            </p>
+                          </div>
+
+                          <span className="badge">
+                            ACTIVE
+                          </span>
+                        </div>
+
+                        <div className="return-box">
+                          <span>Amount invested</span>
+                          <strong>
+                            {formatMoney(
+                              purchase.purchase_amount
+                            )}
+                          </strong>
+                        </div>
+
+                        <div className="return-box">
+                          <span>Interest</span>
+                          <strong>
+                            {formatMoney(
+                              Number(
+                                purchase.expected_return
+                              ) -
+                                Number(
+                                  purchase.purchase_amount
+                                )
+                            )}
+                          </strong>
+                        </div>
+
+                        <div className="return-box">
+                          <span>
+                            Amount at maturity
+                          </span>
+                          <strong>
+                            {formatMoney(
+                              purchase.expected_return
+                            )}
+                          </strong>
+                        </div>
+
+                        <p className="muted">
+                          Matures:{" "}
+                          {formatDate(
+                            purchase.maturity_at
+                          )}
+                        </p>
+                      </article>
+                    )
+                  )}
+                </div>
+              </div>
+            )}
+
+            {maturedPurchases.length > 0 && (
+              <div>
+                <h2
+                  style={{
+                    marginBottom: 12,
+                    marginTop:
+                      activePurchases.length > 0
+                        ? 24
+                        : 0,
+                  }}
+                >
+                  Matured Funds
+                </h2>
+
+                <div
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: "12px",
+                  }}
+                >
+                  {maturedPurchases.map(
+                    (purchase) => (
+                      <article
+                        key={purchase.id}
+                        className="form-card"
+                      >
+                        {purchase.image_url && (
+                          <img
+                            src={purchase.image_url}
+                            alt={purchase.fund_name}
+                            style={{
+                              width: "100%",
+                              borderRadius: 14,
+                              marginBottom: 12,
+                              display: "block",
+                            }}
+                          />
+                        )}
+
+                        <div className="admin-card-head">
+                          <div>
+                            <strong>
+                              {purchase.fund_name}
+                            </strong>
+
+                            <p className="muted">
+                              {purchase.interest_rate}%
+                              {" · "}
+                              {purchase.period_days} days
+                            </p>
+                          </div>
+
+                          <span className="badge">
+                            MATURED
+                          </span>
+                        </div>
+
+                        <div className="return-box">
+                          <span>Amount invested</span>
+                          <strong>
+                            {formatMoney(
+                              purchase.purchase_amount
+                            )}
+                          </strong>
+                        </div>
+
+                        <div className="return-box">
+                          <span>Interest earned</span>
+                          <strong>
+                            {formatMoney(
+                              Number(
+                                purchase.expected_return
+                              ) -
+                                Number(
+                                  purchase.purchase_amount
+                                )
+                            )}
+                          </strong>
+                        </div>
+
+                        <div className="return-box">
+                          <span>
+                            Maturity amount
+                          </span>
+                          <strong>
+                            {formatMoney(
+                              purchase.expected_return
+                            )}
+                          </strong>
+                        </div>
+
+                        <p className="muted">
+                          Matured:{" "}
+                          {formatDate(
+                            purchase.maturity_at
+                          )}
+                        </p>
+                      </article>
+                    )
+                  )}
+                </div>
+              </div>
+            )}
+          </div>
+        )}
       </section>
     </main>
   );
