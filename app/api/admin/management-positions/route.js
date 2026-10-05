@@ -78,7 +78,7 @@ export async function GET(request) {
           WHERE mc.position_id = mp.id
         ) AS has_contract_history
       FROM management_positions mp
-      ORDER BY mp.display_order ASC, mp.id ASC
+      ORDER BY mp.required_direct_members ASC, mp.id ASC
     `);
 
     return Response.json({

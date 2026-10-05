@@ -73,7 +73,7 @@ export async function GET(request) {
         mp.display_order,
         mp.active
 
-      ORDER BY mp.display_order, mp.id
+      ORDER BY mp.required_direct_members ASC, mp.id
       `,
       [session.userId]
     );
