@@ -1,4 +1,5 @@
 import { getDb } from "@/lib/db.js";
+import { processMemberEventRewards } from "@/lib/member-event-service.js";
 import {
   verifySessionToken,
   USER_COOKIE_NAME
@@ -40,6 +41,14 @@ export async function GET(request) {
     const db = getDb();
 
     /*
+     * Process any newly unlocked event rewards before
+     * reading the Points Mall balance. This also retries
+     * rewards for users whose referrals qualified earlier
+     * but whose reward processing did not complete.
+     */
+    await processMemberEventRewards(user.userId);
+
+    /*
      * Check whether Points Cards
      * are enabled by the admin.
      */
@@ -60,10 +69,34 @@ export async function GET(request) {
      * shop items or purchases.
      */
     if (!enabled) {
+      const balanceResult = await db.query(
+        `
+        SELECT COALESCE(balance, 0) AS balance
+        FROM point_accounts
+        WHERE user_id = $1
+        `,
+        [user.userId]
+      );
+
+      const ledgerResult = await db.query(
+        `
+        SELECT
+          type,
+          points,
+          description,
+          created_at
+        FROM point_ledger
+        WHERE user_id = $1
+        ORDER BY created_at DESC
+        LIMIT 100
+        `,
+        [user.userId]
+      );
+
       return Response.json({
         enabled: false,
-        balance: 0,
-        ledger: [],
+        balance: Number(balanceResult.rows[0]?.balance || 0),
+        ledger: ledgerResult.rows,
         rewards: [],
         items: [],
         purchases: []
