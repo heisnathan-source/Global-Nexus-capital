@@ -18,8 +18,10 @@ const pool = new Pool({
 });
 
 const lockKey = "smart-vision-points-worker-v1";
+const dryRun = process.env.DRY_RUN === "true";
 
 async function main() {
+  console.log(`[POINTS-WORKER] Mode: ${dryRun ? "DRY RUN (no database writes)" : "LIVE"}.`);
   const client = await pool.connect();
   let locked = false;
 
@@ -130,6 +132,49 @@ async function main() {
             continue;
           }
 
+          const points = Math.round(Number(event.prize_value));
+
+          if (!Number.isFinite(points) || points <= 0) {
+            throw new Error("Points reward must be a positive number.");
+          }
+
+          if (dryRun) {
+            const existingClaim = await rewardClient.query(
+              `
+              SELECT id, status
+              FROM public.event_member_reward_claims
+              WHERE event_id = $1
+                AND prize_id = $2
+                AND user_id = $3
+                AND prize_type <> 'lucky_draw'
+              LIMIT 1
+              `,
+              [event.event_id, event.prize_id, sponsor.user_id]
+            );
+
+            await rewardClient.query("ROLLBACK");
+
+            if (existingClaim.rowCount > 0) {
+              console.log("[POINTS-WORKER] DRY RUN: existing claim; would skip.", {
+                eventId: event.event_id,
+                userId: sponsor.user_id,
+                claimStatus: existingClaim.rows[0].status
+              });
+            } else {
+              console.log("[POINTS-WORKER] DRY RUN: eligible reward; no changes made.", {
+                eventId: event.event_id,
+                eventName: event.event_name,
+                prizeId: event.prize_id,
+                prizeName: event.prize_name,
+                userId: sponsor.user_id,
+                qualifyingCount,
+                points
+              });
+            }
+
+            continue;
+          }
+
           const claim = await rewardClient.query(
             `
             INSERT INTO public.event_member_reward_claims (
@@ -158,12 +203,6 @@ async function main() {
           if (claim.rowCount === 0) {
             await rewardClient.query("ROLLBACK");
             continue;
-          }
-
-          const points = Math.round(Number(event.prize_value));
-
-          if (!Number.isFinite(points) || points <= 0) {
-            throw new Error("Points reward must be a positive number.");
           }
 
           await rewardClient.query(
