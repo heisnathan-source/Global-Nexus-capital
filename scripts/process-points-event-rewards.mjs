@@ -279,11 +279,42 @@ async function main() {
   }
 }
 
+const requestedIntervalMs = Number(
+  process.env.REWARD_INTERVAL_MS || 300_000
+);
+
+const intervalMs = Number.isFinite(requestedIntervalMs)
+  ? Math.max(60_000, requestedIntervalMs)
+  : 300_000;
+
+let stopping = false;
+
+for (const signal of ["SIGINT", "SIGTERM"]) {
+  process.on(signal, () => {
+    console.log(`[POINTS-WORKER] Received ${signal}; stopping after the current cycle.`);
+    stopping = true;
+  });
+}
+
 try {
-  await main();
-} catch (error) {
-  console.error("[POINTS-WORKER] Fatal error:", error?.message || String(error));
-  process.exitCode = 1;
+  while (!stopping) {
+    try {
+      await main();
+    } catch (error) {
+      console.error("[POINTS-WORKER] Cycle failed:", error?.message || String(error));
+    }
+
+    if (stopping) break;
+
+    console.log(
+      `[POINTS-WORKER] Next check in ${Math.round(intervalMs / 1000)} seconds.`
+    );
+
+    await new Promise((resolve) => {
+      setTimeout(resolve, intervalMs);
+    });
+  }
 } finally {
   await pool.end();
+  console.log("[POINTS-WORKER] Database pool closed.");
 }
